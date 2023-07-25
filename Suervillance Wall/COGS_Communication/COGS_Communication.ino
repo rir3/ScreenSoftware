@@ -3,23 +3,26 @@ bool startReady;
 bool loginReady;
 
 //int resetPin = 7;/
-int startPin = 7;
-int loginPin = 6;
+int startPin = 6;
+int loginPin = 7;
 int mazeSolvedPin = 10;
 int goodEndingPin = 9;
 int badEndingPin = 8;
 int delayTime = 1000;
+int highPin = 5;
 
 
 void setup()
 {
+  pinMode(highPin, OUTPUT);
   pinMode(startPin, INPUT);
   pinMode(loginPin, INPUT);
   pinMode(mazeSolvedPin, OUTPUT);
   pinMode(goodEndingPin, OUTPUT);
   pinMode(badEndingPin, OUTPUT);
   //pinMode(resetPin, INPUT);
-  
+
+  digitalWrite(highPin, HIGH);
   startReady = true;
   loginReady = true;
   

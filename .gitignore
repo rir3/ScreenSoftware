@@ -1,1 +1,7 @@
-Suervillance Wall/RecordedVideo.avi
+# ignore Mac Files
+*.DS_Store
+# ignore ALL Video files
+*.mp4
+*.avi
+#python cache
+__pycache__/
