@@ -7,6 +7,7 @@ import serial #pyserial
 import RecordWebCam
 import COGS_Communication
 import threading
+from queue import Queue
 
 
 #Settings
@@ -24,6 +25,11 @@ breakInVideo = "RecordedVideo.avi"#"RecordedVideo_1.avi"#"RecordedVideo.avi"#"Re
 #breakInVideo = "Stealing.mp4"
 mazeImage = "Maze.png"
 mazeCode = "317208941"
+
+#Comms Resources
+comms_started = False
+tasks = Queue()
+statuses = Queue()
 
 # Initialize Pygame
 pygame.init()
@@ -74,6 +80,7 @@ screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
 #pygame.event.pump()
 #def playVideo(videoName,)
 
+############ Legacy Code ############
 def serialWrite(action, status):
     ser = serial.Serial(arduinoPort, 9600)
     while True:
@@ -96,13 +103,33 @@ def serialRead(status):
         if foundStatus:
             print("Found: " + status)
             break
-    ser.close() 
+    ser.close()
+############/ Legacy Code ############
+
+def arduinoThread():
+    return False
+    
+def is_reset():
+    return False
+
+def comms_start():
+    COGS_Communication.comms_helper(tasks, statuses)
+
+def comms_rw(status, action):
+    if(not comms_started):
+        comms_start()
+    elif(action == "write"):
+        tasks.put(status)
+    elif(action == "read"):
+        while not statuses.empty():
+            if(statuses.get() == status):
+                return True #Found status
+        return False
 
 def record():
     #Records Video from WebCam
     if recording:
         print("Recording: ON")
-        #breakInVideo = "RecordedVideo.avi"
         if serialMode:
             serialThread = threading.Thread(target=serialRead, args=("Game Started",))
             serialThread.start()
@@ -113,17 +140,14 @@ def record():
                     return
         else:
             RecordWebCam.record()
-        return
     else:
         print("Recording: OFF")
-        #breakInVideo = "Stealing.mp4"
-        return
 ########################## BLANK SCREEN ##########################
 def showBlank():
     screen.fill((0,0,0,0))     
     pygame.display.flip()
 ########################## STATIC SCREEN ##########################
-def showStatic():
+def showStatic(): 
     screen.fill((0,0,0,0))
     # Load the video file
     clip = VideoFileClip(staticVideo)
@@ -586,17 +610,14 @@ def showChoice(text):
 
 
 while True:
-    #pygame.event.pump()
-    #Read 5V Arduino to Start Recording Also Reset Code
-    showBlank()
+    showBlank()#<--Start
     record()
-    showStatic()#Read Arduino Reed 5V
+    showStatic()
     showPasswordEntry()
     showBreakIn()
-    showMaze()#Send Arduino 5V when solved
+    showMaze()
     choice = showDecision()
-    showChoice(choice)
-    #showDecision()#Arduino 2 5V Good Ending or Bad
+    showChoice(choice)#<--End
 
 
 #sys.exit()
