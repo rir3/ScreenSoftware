@@ -70,6 +70,7 @@ def comms(tasks, statuses):
 		if tasks.empty():
 			response = ser.readline().decode('utf-8').strip()
 			if response !=  common_status:
+				print("RES:", response)
 				statuses.put(response)
 		else:
 			while not tasks.empty():

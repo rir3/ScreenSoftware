@@ -15,6 +15,7 @@ recording = True
 macBook = False #Enables screen settings for macBook pro 15
 adminMode = False #Allows you to skip screens and view mouse
 serialMode = True #Disables/Enables Serial Mode need arduino connected if enabled
+comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
 pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
@@ -63,6 +64,12 @@ if serialMode:
     print("Serial Mode: ON")
 else:
     print("Serial Mode: OFF")
+
+if comms_mode:
+    print("Communication Mode: ON")
+else:
+    print("Communication Mode: OFF")
+
 
 #Records Video from WebCam
 #if recording:
@@ -113,9 +120,11 @@ def is_reset():
     return False
 
 def comms_start():
+    global comms_started
+    comms_started = True
     COGS_Communication.comms_helper(tasks, statuses)
 
-def comms_rw(status, action):
+def comms_rw(action, status):
     if(not comms_started):
         comms_start()
     elif(action == "write"):
@@ -128,20 +137,17 @@ def comms_rw(status, action):
 
 def record():
     #Records Video from WebCam
-    if recording:
-        print("Recording: ON")
-        if serialMode:
-            serialThread = threading.Thread(target=serialRead, args=("Game Started",))
-            serialThread.start()
-            while True:
-                pygame.event.pump()
-                if not serialThread.is_alive():
-                    RecordWebCam.record()
-                    return
-        else:
-            RecordWebCam.record()
+    if comms_mode:
+        while True:
+            status_found = comms_rw("read", "Game Started")
+            pygame.event.pump()
+
+            if status_found:
+                RecordWebCam.record()
+                return
     else:
-        print("Recording: OFF")
+        RecordWebCam.record()
+
 ########################## BLANK SCREEN ##########################
 def showBlank():
     screen.fill((0,0,0,0))     

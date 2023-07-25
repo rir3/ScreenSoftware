@@ -5,12 +5,11 @@
 import numpy as np
 import cv2
 import time
-import pygame
 
 def record():
 	# This will return video from the first webcam on your computer.
 	cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-	pygame.event.pump()
+	#pygame.event.pump()
 
 	cap.set(3, 1920)
 	cap.set(4, 1080)
@@ -38,7 +37,7 @@ def record():
 
 	# loop runs if capturing has been initialized.
 	while(True):
-		pygame.event.pump()
+		#pygame.event.pump()
 		# reads frames from a camera
 		# ret checks return at each frame
 		ret, frame = cap.read()
