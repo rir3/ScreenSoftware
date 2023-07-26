@@ -2,18 +2,23 @@
 # saving an operated video
 
 # organize imports
-import numpy as np
-import cv2
+import cv2 #opencv-python
 import time
 
-def record():
+def record(video_name="WebCamVideo.avi"):
+	#video_name needs .avi extension
+	#Add Code to find webcam and use said webcam for VideoCapture
 	# This will return video from the first webcam on your computer.
-	cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+	cap = cv2.VideoCapture(0)#For Mac
+	#cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)#For Windows
 	#pygame.event.pump()
 
-	cap.set(3, 1920)
-	cap.set(4, 1080)
-
+	#Get Webcam Max Settings Automatically Here
+	'''cap.set(3, 1920)
+	cap.set(4, 1080)'''
+	#Will use Lowest Res if no Specified
+	cap.set(3, 1280)
+	cap.set(4, 720)
 	#cap.set(3, 3840)
 	#cap.set(4, 2160)
 
@@ -29,7 +34,7 @@ def record():
 	frame_width = int(cap.get(3))
 	frame_height = int(cap.get(4))
 
-	out = cv2.VideoWriter('RecordedVideo.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 20, (frame_width,frame_height))
+	out = cv2.VideoWriter(video_name,cv2.VideoWriter_fourcc('M','J','P','G'), 20, (frame_width,frame_height))
 
 	# Set the timer to trigger after 5 seconds
 	start_time = time.time()
@@ -40,7 +45,7 @@ def record():
 		#pygame.event.pump()
 		# reads frames from a camera
 		# ret checks return at each frame
-		ret, frame = cap.read()
+		ret,frame = cap.read()#Removing ret will cause error
 
 		# Converts to HSV color space, OCV reads colors as BGR
 		# frame is converted to hsv

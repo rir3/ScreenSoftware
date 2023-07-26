@@ -20,9 +20,9 @@ pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
 arduinoPort = '/dev/tty.usbmodem14201'
-staticVideo = "StaticScreen1080p.mp4"
+staticVideo = "StaticScreen.mp4"
 loginPassword = "Rebecca"
-breakInVideo = "RecordedVideo.avi"#"RecordedVideo_1.avi"#"RecordedVideo.avi"#"RecordedVideo_1.avi"   #"Stealing.mp4"   -   "outpy.avi"
+breakInVideo = "WebCamVideo.avi"#Must have end with .avi extension
 #breakInVideo = "Stealing.mp4"
 mazeImage = "Maze.png"
 mazeCode = "317208941"
@@ -113,12 +113,6 @@ def serialRead(status):
     ser.close()
 ############/ Legacy Code ############
 
-def arduinoThread():
-    return False
-    
-def is_reset():
-    return False
-
 def comms_start():
     global comms_started
     comms_started = True
@@ -143,10 +137,10 @@ def record():
             pygame.event.pump()
 
             if status_found:
-                RecordWebCam.record()
+                RecordWebCam.record(breakInVideo)
                 return
     else:
-        RecordWebCam.record()
+        RecordWebCam.record(breakInVideo)
 
 ########################## BLANK SCREEN ##########################
 def showBlank():

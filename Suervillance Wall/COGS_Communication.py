@@ -65,7 +65,7 @@ def comms(tasks, statuses):
 	ser = serial.Serial(port, 9600)#Maybe try/catch here
 
 	while True:
-		time.sleep(0.05)
+		time.sleep(0.05) #(20 fps)
 
 		if tasks.empty():
 			response = ser.readline().decode('utf-8').strip()
