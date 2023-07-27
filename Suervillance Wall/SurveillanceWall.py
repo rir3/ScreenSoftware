@@ -129,10 +129,18 @@ def comms_rw(action, status):
                 return True #Found status
         return False
 
-def record():
+########################## RECORD SCREEN ##########################
+def show_record(status_found = False):
+    screen.fill((0,0,0,0))     
+    pygame.display.flip()
     #Records Video from WebCam
-    if comms_mode:
+    if not recording:
+        return
+    elif status_found:
+        RecordWebCam.record(breakInVideo)
+    elif comms_mode:
         while True:
+            time.sleep(0.05) #(20 fps)
             status_found = comms_rw("read", "Game Started")
             pygame.event.pump()
 
@@ -141,11 +149,7 @@ def record():
                 return
     else:
         RecordWebCam.record(breakInVideo)
-
-########################## BLANK SCREEN ##########################
-def showBlank():
-    screen.fill((0,0,0,0))     
-    pygame.display.flip()
+        
 ########################## STATIC SCREEN ##########################
 def showStatic(): 
     screen.fill((0,0,0,0))
@@ -154,10 +158,6 @@ def showStatic():
     #clip = clip.subclip(1, 9)
     
     #print("Here:1")
-
-    if serialMode:
-        serialThread = threading.Thread(target=serialRead, args=("Show Login",))
-        serialThread.start()
     #print("Here:2")
     while True:
         #pygame.event.pump()
@@ -182,8 +182,9 @@ def showStatic():
             #time.sleep(.05)
             pygame.display.flip()
 
-            if serialMode:
-                if not serialThread.is_alive():
+            if comms_mode:
+                status_found = comms_rw("read", "Show Login")
+                if status_found:
                     return
 
             if adminMode:
@@ -609,16 +610,38 @@ def showChoice(text):
             return
 
 
+def main_loop():
+    show_list = [show_record, showStatic, showPasswordEntry, showBreakIn, showMaze, showDecision, showChoice]
+
+    while True:     
+        for func in show_list:
+            func()
+
+
+
+
+'''Legacy Code'''
+'''
+show_list = [show_record, showStatic, showPasswordEntry, showBreakIn, showMaze, showDecision, showChoice]
+
+start = 0
+end = len(show_list)
 while True:
-    showBlank()#<--Start
-    record()
+    show_list[start]()
+    start = start + 1
+
+    if(start == end):
+        start = 0
+
+while True:
+    show_record()#<--Start
     showStatic()
     showPasswordEntry()
     showBreakIn()
     showMaze()
     choice = showDecision()
     showChoice(choice)#<--End
-
+'''
 
 #sys.exit()
 # Clean up Pygame resources
