@@ -23,9 +23,9 @@ arduinoPort = '/dev/tty.usbmodem14201'
 staticVideo = "StaticScreen.mp4"
 loginPassword = "Rebecca"
 breakInVideo = "WebCamVideo.avi"#Must have end with .avi extension
-#breakInVideo = "Stealing.mp4"
 mazeImage = "Maze.png"
 mazeCode = "317208941"
+choice_text = ""
 
 #Comms Resources
 comms_started = False
@@ -125,12 +125,18 @@ def comms_rw(action, status):
         tasks.put(status)
     elif(action == "read"):
         while not statuses.empty():
-            if(statuses.get() == status):
-                return True #Found status
-        return False
+            s = statuses.get()
+            if(s == "Game Started" and status == "Game Started"):
+                return True, True
+            if(s == "Game Started"):
+                return False, True
+            if(s == status):
+                return True, False #Found status
+        return False, False
 
 ########################## RECORD SCREEN ##########################
-def show_record(status_found = False):
+def show_record():
+    global status_found
     screen.fill((0,0,0,0))     
     pygame.display.flip()
     #Records Video from WebCam
@@ -138,10 +144,11 @@ def show_record(status_found = False):
         return
     elif status_found:
         RecordWebCam.record(breakInVideo)
+        status_found = False
     elif comms_mode:
         while True:
             time.sleep(0.05) #(20 fps)
-            status_found = comms_rw("read", "Game Started")
+            status_found, break_loop = comms_rw("read", "Game Started")
             pygame.event.pump()
 
             if status_found:
@@ -183,7 +190,9 @@ def showStatic():
             pygame.display.flip()
 
             if comms_mode:
-                status_found = comms_rw("read", "Show Login")
+                status_found, break_loop = comms_rw("read", "Show Login")
+                if break_loop:
+                    return True
                 if status_found:
                     return
 
@@ -482,6 +491,7 @@ def showMazePasswordEntry():
 
 ########################## Decision SCREEN ##########################
 def showDecision():
+    global choice_text
     screen.fill((0,0,0,0))
 
     clock = pygame.time.Clock()
@@ -515,7 +525,8 @@ def showDecision():
                             #COGS_Communication.write(arduinoPort, "5", "Bad Ending")
                             serialThread = threading.Thread(target=serialWrite, args=("5", "Bad Ending",))
                             serialThread.start()
-                    return "SECURITY DOOR OVERIDDEN"
+                    choice_text = "SECURITY DOOR OVERIDDEN"
+                    return
                     #showChoice("VIDEO DELETED!")
                     #return
                 # Leave Video
@@ -525,7 +536,8 @@ def showDecision():
                             #COGS_Communication.write(arduinoPort, "4", "Good Ending")
                             serialThread = threading.Thread(target=serialWrite, args=("4", "Good Ending",))
                             serialThread.start()
-                    return "DIAMOND THEFT REPORTED"
+                    choice_text = "DIAMOND THEFT REPORTED"
+                    return 
                     #showChoice("VIDEO NOT DELETED")
                     #return
         
@@ -575,7 +587,8 @@ def showDecision():
         # 60 frames should be passed.
         clock.tick(60)
 
-def showChoice(text):
+def showChoice():
+    global choice_text
     #started = False
     #start_time = time.time()
     #trigger_time = start_time + 15
@@ -590,7 +603,7 @@ def showChoice(text):
 
     text_font = pygame.font.Font(None, 60)
 
-    text_surface = text_font.render(text, True, (0, 0, 0))
+    text_surface = text_font.render(choice_text, True, (0, 0, 0))
     # render at position stated in argumentsre
     screen.blit(text_surface, (500+top_border-50, 375+top_border))
       
@@ -608,14 +621,23 @@ def showChoice(text):
         pygame.event.pump()
         if time.time() > trigger_time:
             return
+        
 
 
 def main_loop():
+    global status_found
     show_list = [show_record, showStatic, showPasswordEntry, showBreakIn, showMaze, showDecision, showChoice]
-
+    
     while True:     
         for func in show_list:
-            func()
+            break_flag = func()
+            if(break_flag):
+                status_found = True
+                break
+
+def main():
+    main_thread = threading.Thread(target=main_loop)
+    main_thread.start()
 
 
 
