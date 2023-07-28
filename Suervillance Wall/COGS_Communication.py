@@ -1,4 +1,4 @@
-import serial
+import serial #pyserial
 import time
 from queue import Queue
 import threading
@@ -74,7 +74,9 @@ def comms(tasks, statuses):
 				statuses.put(response)
 		else:
 			while not tasks.empty():
-				ser.write(str.encode(tasks.get()))
+				to_write = tasks.get()
+				print("SENT:", to_write)
+				ser.write(str.encode(to_write))
 
 def comms_helper(tasks, statuses):
 	comms_thread = threading.Thread(target=comms, args=(tasks, statuses))

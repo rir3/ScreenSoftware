@@ -3,14 +3,13 @@ bool startReady;
 bool loginReady;
 
 //int resetPin = 7;/
+int highPin = 5;
 int startPin = 6;
 int loginPin = 7;
-int mazeSolvedPin = 10;
-int goodEndingPin = 9;
 int badEndingPin = 8;
+int goodEndingPin = 9;
+int mazeSolvedPin = 10;
 int delayTime = 1000;
-int highPin = 5;
-
 
 void setup()
 {
@@ -33,14 +32,12 @@ void setup()
 void loop()
 {
     while(Serial.available()){
-        action(Serial.parseInt());
+        String message = Serial.readString();
+        message.trim();
+        //Serial.println("Arduino:" + message);
+        to_cogs(message);
+        //action(Serial.parseInt());
      }
-   /*if(digitalRead(resetPin) == HIGH)
-    {
-        Serial.println("Reset");
-        reset();
-        delay(delayTime);
-    }*/
     if(digitalRead(startPin) == HIGH) {
         Serial.println("Game Started");
         //action(1);
@@ -57,52 +54,22 @@ void loop()
         Serial.println("N/A");
         delay(delayTime);
     }
-    /*else
-    {
-      if(Serial.available()){
-        action(Serial.parseInt());
-      }
-    }*/
 }
-void action(int a)
+
+void to_cogs(String a)
 {
-      switch (a) {
-        case 1:
-          //startReady = false;
-          Serial.println("Game Started");
-          break;
-        case 2: 
-          //loginReady = false;
-          Serial.println("Show Login");
-          break;
-        case 21845:
-        case -10923:
-        case 3:
-          digitalWrite(mazeSolvedPin, HIGH);
-          Serial.println("Maze Solved");
-          //delay(5000);
-          break;
-        case -14564:
-        case 4:
-          digitalWrite(goodEndingPin, HIGH);
-          Serial.println("Good Ending");
-          //delay(5000);
-          break;
-        case -18205:
-        case 5:
-          digitalWrite(badEndingPin, HIGH);
-          Serial.println("Bad Ending");
-          //delay(5000);
-          break;
-        case 6:
-          reset();
-          Serial.println("Game Reset");
-          break;
-        default:
-          Serial.println(a);
-          break;
+    if(a == "Maze Solved"){
+      digitalWrite(mazeSolvedPin, HIGH);
     }
+    else if(a == "Good Ending"){
+      digitalWrite(goodEndingPin, HIGH);
+    }
+    else if(a == "Bad Ending"){
+      digitalWrite(badEndingPin, HIGH);
+    }
+    //Serial.println("Arduino: " + a);
 }
+
 void toggle(int pin)
 {
   bool pinState = digitalRead(pin);

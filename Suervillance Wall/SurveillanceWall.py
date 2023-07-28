@@ -3,7 +3,6 @@ from moviepy.editor import VideoFileClip
 import pygame
 from pygame.locals import *
 import time
-import serial #pyserial
 import RecordWebCam
 import COGS_Communication
 import threading
@@ -11,11 +10,10 @@ from queue import Queue
 
 
 #Settings
-recording = True
-macBook = False #Enables screen settings for macBook pro 15
+recording = False
+macBook = True #Enables screen settings for macBook pro 15
 adminMode = True #Allows you to skip screens and view mouse
-serialMode = False #Disables/Enables Serial Mode need arduino connected if enabled
-comms_mode = False #Disables/Enables Communication Mode for COGS Communication (Arduino)
+comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
 pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
@@ -59,13 +57,6 @@ else:
     mazeCode = "111111111"
     #staticVideo = "StaticScreen4k.mp4"
 
-#Enable Serial Comms with Arduino
-if serialMode:
-    #ser = serial.Serial(arduinoPort, 9600)  # open serial port, change the port name as per your system
-    print("Serial Mode: ON")
-else:
-    print("Serial Mode: OFF")
-
 if comms_mode:
     print("Communication Mode: ON")
 else:
@@ -88,38 +79,13 @@ screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
 #pygame.event.pump()
 #def playVideo(videoName,)
 
-############ Legacy Code ############
-def serialWrite(action, status):
-    ser = serial.Serial(arduinoPort, 9600)
-    while True:
-        #pygame.event.pump()
-        #print("donkey")
-        foundStatus = COGS_Communication.write(arduinoPort, action, status, ser)
-        #print(foundStatus)
-        if foundStatus:
-            print("Found: " + status)
-            break
-    ser.close() 
-
-def serialRead(status):
-    ser = serial.Serial(arduinoPort, 9600)
-    while True:
-        #pygame.event.pump()
-        #print("donkey")
-        foundStatus = COGS_Communication.read(arduinoPort, status, ser)
-        #print(foundStatus)
-        if foundStatus:
-            print("Found: " + status)
-            break
-    ser.close()
-############/ Legacy Code ############
-
 def comms_start():
     global comms_started
     comms_started = True
     COGS_Communication.comms_helper(tasks, statuses)
 
-def comms_rw(action, status):
+def comms_rw(action, status="N/A"):
+    reset_status = "Game Started"
     if(not comms_started):
         comms_start()
     elif(action == "write"):
@@ -127,13 +93,12 @@ def comms_rw(action, status):
     elif(action == "read"):
         while not statuses.empty():
             s = statuses.get()
-            if(s == "Game Started" and status == "Game Started"):
+            if(s == reset_status):
                 return True, True
-            if(s == "Game Started"):
-                return False, True
-            if(s == status):
+            elif(s == status):
                 return True, False #Found status
         return False, False
+    return False, False
 
 ########################## RECORD SCREEN ##########################
 def show_record():
@@ -144,14 +109,12 @@ def show_record():
     if not recording:
         return
     elif status_found:
-        RecordWebCam.record(breakInVideo)
         status_found = False
+        RecordWebCam.record(breakInVideo) 
     elif comms_mode:
         while True:
             time.sleep(0.05) #(20 fps)
             status_found, break_loop = comms_rw("read", "Game Started")
-            pygame.event.pump()
-
             if status_found:
                 RecordWebCam.record(breakInVideo)
                 return
@@ -159,7 +122,7 @@ def show_record():
         RecordWebCam.record(breakInVideo)
         
 ########################## STATIC SCREEN ##########################
-def showStatic(): 
+def show_static(): 
     screen.fill((0,0,0,0))
     # Load the video file
     clip = VideoFileClip(staticVideo)
@@ -195,7 +158,7 @@ def showStatic():
                 if break_loop:
                     return True
                 if status_found:
-                    return
+                    return False
 
             if adminMode:
                 # Check for events and exit if the user presses the escape key
@@ -205,10 +168,10 @@ def showStatic():
                         exit()
                     # Space for next Screen
                     if event.type == KEYDOWN and event.key == K_SPACE:
-                        return
+                        return False
 
 ########################## PASSWORD ENTRY SCREEN ##########################
-def showPasswordEntry():
+def show_password_entry():
     screen.fill((0,0,0,0))
 
     clock = pygame.time.Clock()
@@ -251,7 +214,7 @@ def showPasswordEntry():
                     return
                 elif event.key == K_RETURN:
                     if user_text.upper() == loginPassword.upper():
-                        return
+                        return False
                     else:
                         user_text = ""
                         text_font_Red = pygame.font.Font(None, 50)
@@ -264,6 +227,10 @@ def showPasswordEntry():
                     user_text += event.unicode
                     user_text = user_text.upper()
 
+        if comms_mode:
+                status_found, break_loop = comms_rw("read")
+                if break_loop:
+                    return True
         # Aqua Background
         screen.fill((35,250,247,255))
         #screen.fill((0,0,0,0))
@@ -300,7 +267,7 @@ def showPasswordEntry():
         clock.tick(60)
 
 ########################## STEALING SCREEN ##########################
-def showBreakIn():
+def show_break_in():
     screen.fill((0,0,0,0))
     # Load the video file
     clip = VideoFileClip(breakInVideo)
@@ -322,6 +289,11 @@ def showBreakIn():
         time.sleep(.1)
         pygame.display.flip()
 
+        if comms_mode:
+                status_found, break_loop = comms_rw("read")
+                if break_loop:
+                    return True
+
         if adminMode:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
@@ -333,7 +305,7 @@ def showBreakIn():
                     return
 
 ########################## MAZE SCREEN ##########################
-def showMaze():
+def show_maze():
     screen.fill((0,0,0,0))
     while True:
         #Scale Factor Change
@@ -372,7 +344,10 @@ def showMaze():
         # paint screen one time
         pygame.display.flip()
 
-
+        if comms_mode:
+                status_found, break_loop = comms_rw("read")
+                if break_loop:
+                    return True
         if adminMode:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
@@ -381,18 +356,18 @@ def showMaze():
                     exit()
                 # Space for next Screen
                 if event.type == KEYDOWN and event.key == K_SPACE:
-                    return
+                    return False
                 if event.type == KEYDOWN and event.key == K_RIGHT:
-                    showMazePasswordEntry()
-                    return
+                    show_maze_password_entry()
+                    return False
         else:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
                 if event.type == KEYDOWN and event.key == K_RIGHT:
-                        showMazePasswordEntry()
+                        show_maze_password_entry()
                         return
 ########################## Maze PASSWORD ENTRY SCREEN ##########################
-def showMazePasswordEntry():
+def show_maze_password_entry():
     screen.fill((0,0,0,0))
 
     clock = pygame.time.Clock()
@@ -418,6 +393,10 @@ def showMazePasswordEntry():
     text2_font = pygame.font.Font(None, 100)
 
     while True:
+        if comms_mode:
+                status_found, break_loop = comms_rw("read")
+                if break_loop:
+                    return True
         for event in pygame.event.get():
       
           # if user types QUIT then the screen will close
@@ -432,15 +411,12 @@ def showMazePasswordEntry():
                     user_text = user_text[:-1]
                 # Right Arrow for next Screen
                 elif event.key == K_LEFT:
-                    showMaze()
+                    show_maze()
                     return
                 elif event.key == K_RETURN:
                     if user_text == mazeCode:
-                        if serialMode:
-                            #COGS_Communication.write(arduinoPort, "3", "Maze Solved")
-                            serialThread = threading.Thread(target=serialWrite, args=("3", "Maze Solved",))#fixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                            serialThread.start()
-                            #time.sleep(1)
+                        if comms_mode:
+                            comms_rw("write", "Maze Solved")
                         #showDecision()
                         return
                     else:
@@ -491,7 +467,7 @@ def showMazePasswordEntry():
         clock.tick(60)
 
 ########################## Decision SCREEN ##########################
-def showDecision():
+def show_decision():
     global choice_text
     screen.fill((0,0,0,0))
 
@@ -509,6 +485,10 @@ def showDecision():
     color = pygame.Color('white')
 
     while True:
+        if comms_mode:
+                status_found, break_loop = comms_rw("read")
+                if break_loop:
+                    return True
         for event in pygame.event.get():
             if event.type == pygame.QUIT and adminMode:
                 pygame.quit()
@@ -521,24 +501,18 @@ def showDecision():
                     #return
                 # Delete Video
                 if event.key == pygame.K_BACKSPACE:
-                    if serialMode:
-                            time.sleep(4)
-                            #COGS_Communication.write(arduinoPort, "5", "Bad Ending")
-                            serialThread = threading.Thread(target=serialWrite, args=("5", "Bad Ending",))
-                            serialThread.start()
+                    if comms_mode:
+                            comms_rw("write", "Bad Ending")
                     choice_text = "SECURITY DOOR OVERIDDEN"
-                    return
+                    return False
                     #showChoice("VIDEO DELETED!")
                     #return
                 # Leave Video
                 elif event.key == K_RETURN:
-                    if serialMode:
-                            time.sleep(4)
-                            #COGS_Communication.write(arduinoPort, "4", "Good Ending")
-                            serialThread = threading.Thread(target=serialWrite, args=("4", "Good Ending",))
-                            serialThread.start()
+                    if comms_mode:
+                            comms_rw("write", "Good Ending")
                     choice_text = "DIAMOND THEFT REPORTED"
-                    return 
+                    return False
                     #showChoice("VIDEO NOT DELETED")
                     #return
         
@@ -588,7 +562,7 @@ def showDecision():
         # 60 frames should be passed.
         clock.tick(60)
 
-def showChoice():
+def show_choice():
     global choice_text
     #started = False
     #start_time = time.time()
@@ -610,24 +584,20 @@ def showChoice():
       
     pygame.display.flip()
 
-    #pygame.time.wait(15000)
-    #return
-    #if not started:
-    #    start_time = time.time()
-    #    trigger_time = start_time + 15
-    #    started = True
     start_time = time.time()
     trigger_time = start_time + 15
     while True:
+        if comms_mode:
+                status_found, break_loop = comms_rw("read")
+                if break_loop:
+                    return True
         pygame.event.pump()
         if time.time() > trigger_time:
-            return
-        
-
+            return False
 
 def main_loop():
     global status_found
-    show_list = [show_record, showStatic, showPasswordEntry, showBreakIn, showMaze, showDecision, showChoice]
+    show_list = [show_record, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice]
     
     while True:     
         for func in show_list:
