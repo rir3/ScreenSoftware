@@ -13,9 +13,9 @@ from queue import Queue
 #Settings
 recording = True
 macBook = False #Enables screen settings for macBook pro 15
-adminMode = False #Allows you to skip screens and view mouse
-serialMode = True #Disables/Enables Serial Mode need arduino connected if enabled
-comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
+adminMode = True #Allows you to skip screens and view mouse
+serialMode = False #Disables/Enables Serial Mode need arduino connected if enabled
+comms_mode = False #Disables/Enables Communication Mode for COGS Communication (Arduino)
 pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
@@ -26,6 +26,7 @@ breakInVideo = "WebCamVideo.avi"#Must have end with .avi extension
 mazeImage = "Maze.png"
 mazeCode = "317208941"
 choice_text = ""
+status_found = False
 
 #Comms Resources
 comms_started = False
@@ -636,10 +637,12 @@ def main_loop():
                 break
 
 def main():
-    main_thread = threading.Thread(target=main_loop)
-    main_thread.start()
+    main_loop()
+    #main_thread = threading.Thread(target=main_loop)
+    #main_thread.start()
 
-
+if __name__ == "__main__":
+    main()
 
 
 '''Legacy Code'''
