@@ -619,13 +619,13 @@ def show_ending():
         orig_size = surface.get_size()
 
         # Set the scale factor
-        scale_adj_factor = .67
+        scale_adj_factor = 1
 
         # Scale the image
         scaled_surface = pygame.transform.scale(surface, (orig_size[0]*scale_factor*scale_adj_factor, orig_size[1]*scale_factor*scale_adj_factor))
             
         screen.blit(scaled_surface, (0, top_border))
-        time.sleep(.1)
+        time.sleep(.05)
         pygame.display.flip()
 
         if adminMode:
