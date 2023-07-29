@@ -52,7 +52,7 @@ void loop()
     }
     else{
         Serial.println("N/A");
-        delay(delayTime);
+        delay(500);
     }
 }
 
