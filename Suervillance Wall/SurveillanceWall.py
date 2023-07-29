@@ -116,6 +116,7 @@ def show_record():
         RecordWebCam.record(breakInVideo) 
     elif comms_mode:
         while True:
+            pygame.event.pump() # Keeps from Idle
             time.sleep(0.05) #(20 fps)
             status_found, break_loop = comms_rw("read", "Game Started")
             if status_found:
