@@ -53,7 +53,7 @@ else:
 
 #Hides Mouse and Enables Screen Skip Settings
 if not adminMode:
-    pygame.mouse.set_visible(False)
+    #pygame.mouse.set_visible(False)
     print("Admin Mode: OFF")
 else:
     print("Admin Mode: ON")
