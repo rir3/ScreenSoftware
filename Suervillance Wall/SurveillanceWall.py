@@ -141,6 +141,8 @@ def show_static():
         #print("Here:3")
         # Iterate over each frame of the video and display it in the Pygame window
         for frame in clip.iter_frames(fps=clip.fps):
+            pygame.event.pump() # Keeps from Idle
+            time.sleep(0.05) #(20 fps)
             #print("Here:4")
             #pygame.event.pump()
             surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
@@ -206,6 +208,8 @@ def show_password_entry():
         pygame.event.pump() # Keeps from Idle
         time.sleep(0.05) #(20 fps)
         for event in pygame.event.get():
+            pygame.event.pump() # Keeps from Idle
+            time.sleep(0.05) #(20 fps)
       
           # if user types QUIT then the screen will close
             if event.type == pygame.QUIT and adminMode:
@@ -283,6 +287,8 @@ def show_break_in():
 
     # Iterate over each frame of the video and display it in the Pygame window
     for frame in clip.iter_frames(fps=clip.fps):
+        pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
         # Get the original dimensions of the image
         orig_size = surface.get_size()
@@ -305,6 +311,8 @@ def show_break_in():
         if adminMode:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
+                pygame.event.pump() # Keeps from Idle
+                time.sleep(0.05) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_ESCAPE:
                     pygame.quit()
                     exit()
@@ -361,6 +369,8 @@ def show_maze():
         if adminMode:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
+                pygame.event.pump() # Keeps from Idle
+                time.sleep(0.05) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_ESCAPE:
                     pygame.quit()
                     exit()
@@ -373,6 +383,8 @@ def show_maze():
         else:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
+                pygame.event.pump() # Keeps from Idle
+                time.sleep(0.05) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_RIGHT:
                         show_maze_password_entry()
                         return
@@ -410,7 +422,8 @@ def show_maze_password_entry():
                 if break_loop:
                     return True
         for event in pygame.event.get():
-      
+            pygame.event.pump() # Keeps from Idle
+            time.sleep(0.05) #(20 fps)
           # if user types QUIT then the screen will close
             if event.type == pygame.QUIT and adminMode:
                 pygame.quit()
@@ -505,6 +518,8 @@ def show_decision():
                 if break_loop:
                     return True
         for event in pygame.event.get():
+            pygame.event.pump() # Keeps from Idle
+            time.sleep(0.05) #(20 fps)
             if event.type == pygame.QUIT and adminMode:
                 pygame.quit()
                 sys.exit()
@@ -627,6 +642,8 @@ def show_ending():
     # Chooses one ending or the other depending on choice made
 
     for frame in clip.iter_frames(fps=clip.fps):
+        pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
         # Get the original dimensions of the image
         orig_size = surface.get_size()
@@ -644,6 +661,8 @@ def show_ending():
         if adminMode:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
+                pygame.event.pump() # Keeps from Idle
+                time.sleep(0.05) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_ESCAPE:
                     pygame.quit()
                     exit()
