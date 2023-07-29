@@ -9,7 +9,7 @@ int loginPin = 7;
 int badEndingPin = 8;
 int goodEndingPin = 9;
 int mazeSolvedPin = 10;
-int delayTime = 1000;
+int delayTime = 5000;
 
 void setup()
 {
