@@ -25,6 +25,9 @@ mazeImage = "Maze.png"
 mazeCode = "317208941"
 choice_text = ""
 status_found = False
+goodEnding = "good_ending.mp4"
+badEnding = "bad_ending.mp4"
+good_ending = False
 
 #Comms Resources
 comms_started = False
@@ -469,6 +472,7 @@ def show_maze_password_entry():
 ########################## Decision SCREEN ##########################
 def show_decision():
     global choice_text
+    global good_ending
     screen.fill((0,0,0,0))
 
     clock = pygame.time.Clock()
@@ -504,6 +508,7 @@ def show_decision():
                     if comms_mode:
                             comms_rw("write", "Bad Ending")
                     choice_text = "SECURITY DOOR OVERIDDEN"
+                    good_ending = False
                     return False
                     #showChoice("VIDEO DELETED!")
                     #return
@@ -512,6 +517,7 @@ def show_decision():
                     if comms_mode:
                             comms_rw("write", "Good Ending")
                     choice_text = "DIAMOND THEFT REPORTED"
+                    good_ending = True
                     return False
                     #showChoice("VIDEO NOT DELETED")
                     #return
@@ -594,6 +600,43 @@ def show_choice():
         pygame.event.pump()
         if time.time() > trigger_time:
             return False
+
+def show_ending():
+    global good_ending
+    screen.fill((0,0,0,0))
+    # Load the video file
+
+    if good_ending:
+        clip = VideoFileClip(goodEnding)
+    else:
+        clip = VideoFileClip(badEnding)
+        clip = clip.subclip(1, 10)
+    # Chooses one ending or the other depending on choice made
+
+    for frame in clip.iter_frames(fps=clip.fps):
+        surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
+        # Get the original dimensions of the image
+        orig_size = surface.get_size()
+
+        # Set the scale factor
+        scale_adj_factor = .67
+
+        # Scale the image
+        scaled_surface = pygame.transform.scale(surface, (orig_size[0]*scale_factor*scale_adj_factor, orig_size[1]*scale_factor*scale_adj_factor))
+            
+        screen.blit(scaled_surface, (0, top_border))
+        time.sleep(.1)
+        pygame.display.flip()
+
+        if adminMode:
+            # Check for events and exit if the user presses the escape key
+            for event in pygame.event.get():
+                if event.type == KEYDOWN and event.key == K_ESCAPE:
+                    pygame.quit()
+                    exit()
+                # Space for next Screen
+                if event.type == KEYDOWN and event.key == K_SPACE:
+                    return
 
 def main_loop():
     global status_found
