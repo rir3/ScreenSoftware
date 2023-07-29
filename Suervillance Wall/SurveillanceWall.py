@@ -137,6 +137,7 @@ def show_static():
     #print("Here:2")
     while True:
         pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         #print("Here:3")
         # Iterate over each frame of the video and display it in the Pygame window
         for frame in clip.iter_frames(fps=clip.fps):
@@ -203,6 +204,7 @@ def show_password_entry():
 
     while True:
         pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         for event in pygame.event.get():
       
           # if user types QUIT then the screen will close
@@ -315,6 +317,7 @@ def show_maze():
     screen.fill((0,0,0,0))
     while True:
         pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         #Scale Factor Change
         scale_factor_diff = .325
         # get the default size
@@ -401,6 +404,7 @@ def show_maze_password_entry():
 
     while True:
         pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
@@ -495,6 +499,7 @@ def show_decision():
 
     while True:
         pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
@@ -600,6 +605,7 @@ def show_choice():
     trigger_time = start_time + 3
     while True:
         pygame.event.pump() # Keeps from Idle
+        time.sleep(0.05) #(20 fps)
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
@@ -663,31 +669,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-'''Legacy Code'''
-'''
-show_list = [show_record, showStatic, showPasswordEntry, showBreakIn, showMaze, showDecision, showChoice]
-
-start = 0
-end = len(show_list)
-while True:
-    show_list[start]()
-    start = start + 1
-
-    if(start == end):
-        start = 0
-
-while True:
-    show_record()#<--Start
-    showStatic()
-    showPasswordEntry()
-    showBreakIn()
-    showMaze()
-    choice = showDecision()
-    showChoice(choice)#<--End
-'''
-
-#sys.exit()
-# Clean up Pygame resources
-#pygame.quit()
