@@ -120,6 +120,7 @@ def show_record():
             time.sleep(0.05) #(20 fps)
             status_found, break_loop = comms_rw("read", "Game Started")
             if status_found:
+                status_found = False
                 RecordWebCam.record(breakInVideo)
                 return
     else:
@@ -135,7 +136,7 @@ def show_static():
     #print("Here:1")
     #print("Here:2")
     while True:
-        #pygame.event.pump()
+        pygame.event.pump() # Keeps from Idle
         #print("Here:3")
         # Iterate over each frame of the video and display it in the Pygame window
         for frame in clip.iter_frames(fps=clip.fps):
@@ -201,6 +202,7 @@ def show_password_entry():
     text2_font = pygame.font.Font(None, 100)
 
     while True:
+        pygame.event.pump() # Keeps from Idle
         for event in pygame.event.get():
       
           # if user types QUIT then the screen will close
@@ -312,6 +314,7 @@ def show_break_in():
 def show_maze():
     screen.fill((0,0,0,0))
     while True:
+        pygame.event.pump() # Keeps from Idle
         #Scale Factor Change
         scale_factor_diff = .325
         # get the default size
@@ -397,6 +400,7 @@ def show_maze_password_entry():
     text2_font = pygame.font.Font(None, 100)
 
     while True:
+        pygame.event.pump() # Keeps from Idle
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
@@ -490,6 +494,7 @@ def show_decision():
     color = pygame.Color('white')
 
     while True:
+        pygame.event.pump() # Keeps from Idle
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
@@ -594,6 +599,7 @@ def show_choice():
     start_time = time.time()
     trigger_time = start_time + 3
     while True:
+        pygame.event.pump() # Keeps from Idle
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
