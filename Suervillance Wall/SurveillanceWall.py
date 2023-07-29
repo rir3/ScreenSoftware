@@ -591,7 +591,7 @@ def show_choice():
     pygame.display.flip()
 
     start_time = time.time()
-    trigger_time = start_time + 15
+    trigger_time = start_time + 3
     while True:
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
@@ -640,7 +640,7 @@ def show_ending():
 
 def main_loop():
     global status_found
-    show_list = [show_record, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice]
+    show_list = [show_record, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
     while True:     
         for func in show_list:
