@@ -323,45 +323,45 @@ def show_break_in():
 ########################## MAZE SCREEN ##########################
 def show_maze():
     screen.fill((0,0,0,0))
+    #Scale Factor Change
+    scale_factor_diff = .325
+    # get the default size
+    x, y = screen.get_size()
+
+    #print(x, y)
+
+    # Set the dimensions of the screen
+    screen_size = (x, y)
+
+    # set the pygame window name
+    #pygame.display.set_caption('image')
+        
+    # create a surface object, image is drawn on it.
+    image = pygame.image.load(mazeImage).convert()
+        
+    #increase width of image
+    # Get the original dimensions of the image
+    orig_size = image.get_size()
+
+    # Set the scale factor
+    #scale_factor = 1.75
+
+    # Scale the image
+    scaled_image = pygame.transform.scale(image, (orig_size[0]*scale_factor*scale_factor_diff, orig_size[1]*scale_factor*scale_factor_diff))
+
+    # Blit the scaled image to the center of the screen
+    #screen.blit(scaled_image, (screen_size[0]/2 - scaled_image.get_width()/2, screen_size[1]/2 - scaled_image.get_height()/2))
+
+
+    # Using blit to copy content from one surface to other
+    screen.blit(scaled_image, (0, top_border))
+        
+    # paint screen one time
+    pygame.display.flip()
+
     while True:
         pygame.event.pump() # Keeps from Idle
         time.sleep(0.05) #(20 fps)
-        #Scale Factor Change
-        scale_factor_diff = .325
-        # get the default size
-        x, y = screen.get_size()
-
-        #print(x, y)
-
-        # Set the dimensions of the screen
-        screen_size = (x, y)
-
-        # set the pygame window name
-        #pygame.display.set_caption('image')
-         
-        # create a surface object, image is drawn on it.
-        image = pygame.image.load(mazeImage).convert()
-         
-        #increase width of image
-        # Get the original dimensions of the image
-        orig_size = image.get_size()
-
-        # Set the scale factor
-        #scale_factor = 1.75
-
-        # Scale the image
-        scaled_image = pygame.transform.scale(image, (orig_size[0]*scale_factor*scale_factor_diff, orig_size[1]*scale_factor*scale_factor_diff))
-
-        # Blit the scaled image to the center of the screen
-        #screen.blit(scaled_image, (screen_size[0]/2 - scaled_image.get_width()/2, screen_size[1]/2 - scaled_image.get_height()/2))
-
-
-        # Using blit to copy content from one surface to other
-        screen.blit(scaled_image, (0, top_border))
-         
-        # paint screen one time
-        pygame.display.flip()
-
         if comms_mode:
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
@@ -370,7 +370,7 @@ def show_maze():
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
                 pygame.event.pump() # Keeps from Idle
-                time.sleep(0.05) #(20 fps)
+                time.sleep(0.1) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_ESCAPE:
                     pygame.quit()
                     exit()
@@ -384,10 +384,10 @@ def show_maze():
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
                 pygame.event.pump() # Keeps from Idle
-                time.sleep(0.05) #(20 fps)
+                time.sleep(0.1) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_RIGHT:
                         show_maze_password_entry()
-                        return
+                        return False
 ########################## Maze PASSWORD ENTRY SCREEN ##########################
 def show_maze_password_entry():
     screen.fill((0,0,0,0))
@@ -617,7 +617,7 @@ def show_choice():
     pygame.display.flip()
 
     start_time = time.time()
-    trigger_time = start_time + 3
+    trigger_time = start_time + 1
     while True:
         pygame.event.pump() # Keeps from Idle
         time.sleep(0.05) #(20 fps)
