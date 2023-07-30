@@ -169,7 +169,7 @@ def show_static():
         # Iterate over each frame of the video and display it in the Pygame window
         for frame in clip.iter_frames(fps=clip.fps):
             pygame.event.pump() # Keeps from Idle
-            time.sleep(0.1) #(20 fps)
+            time.sleep(0.15) #(20 fps)
             #print("Here:4")
             #pygame.event.pump()
             surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
