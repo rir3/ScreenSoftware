@@ -106,8 +106,9 @@ def comms_rw(action, status="N/A"):
 def record():
     global status_found
     status_found = False
-    text_font = pygame.font.Font(None, 50)
-    text_surface = text_font.render('RECORDING IN PROGRESS!', True, (0, 0, 0))
+    screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))#White Box
+    text_font = pygame.font.Font(None, 50)#Font 50 Size
+    text_surface = text_font.render('RECORDING IN PROGRESS!', True, (0, 0, 0))#Text Black Font
     screen.blit(text_surface, (575+top_border, 375+top_border))
     pygame.display.flip()
     RecordWebCam.record(breakInVideo)
