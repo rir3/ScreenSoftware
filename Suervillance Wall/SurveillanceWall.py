@@ -10,10 +10,11 @@ from queue import Queue
 
 
 #Settings
-recording = True
-macBook = False #Enables screen settings for macBook pro 15
-adminMode = False #Allows you to skip screens and view mouse
-comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
+recording = False
+comms_mode = False #Disables/Enables Communication Mode for COGS Communication (Arduino)
+adminMode = True #Allows you to skip screens and view mouse
+macBook = True #Enables screen settings for macBook pro 15
+
 pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
@@ -110,7 +111,15 @@ def delay(delay_time):
         pygame.event.pump() # Keeps from Idle
         time.sleep(0.1) #(20 fps)
         if time.time() > trigger_time:
-            return False
+            return 
+
+def check_close_event():
+    for event in pygame.event.get():
+        pygame.event.pump() # Keeps from Idle
+        time.sleep(0.1) #(20 fps)
+        if event.type == KEYDOWN and event.key == K_ESCAPE and event.type == pygame.MOUSEBUTTONDOWN:
+            pygame.quit()
+            exit()
 
 def record():
     RecordWebCam.record(breakInVideo)
@@ -194,16 +203,24 @@ def show_static():
                     return True
                 if status_found:
                     return False
-
+            
             if adminMode:
                 # Check for events and exit if the user presses the escape key
                 for event in pygame.event.get():
                     if event.type == KEYDOWN and event.key == K_ESCAPE:
                         pygame.quit()
                         exit()
+                    if event.type == KEYDOWN and event.key == K_ESCAPE and event.type == pygame.MOUSEBUTTONDOWN:
+                        pygame.quit()
+                        exit()
                     # Space for next Screen
                     if event.type == KEYDOWN and event.key == K_SPACE:
                         return False
+            else:
+                for event in pygame.event.get():
+                    if event.type == KEYDOWN and event.key == K_ESCAPE and event.type == pygame.MOUSEBUTTONDOWN:
+                        pygame.quit()
+                        exit()
 
 ########################## PASSWORD ENTRY SCREEN ##########################
 def show_password_entry():
@@ -242,7 +259,7 @@ def show_password_entry():
             if event.type == pygame.QUIT and adminMode:
                 pygame.quit()
                 sys.exit()
-      
+                    
             if event.type == pygame.KEYDOWN:
                 # Check for backspace
                 if event.key == pygame.K_BACKSPACE:
@@ -413,8 +430,11 @@ def show_maze():
                 pygame.event.pump() # Keeps from Idle
                 time.sleep(0.1) #(20 fps)
                 if event.type == KEYDOWN and event.key == K_RIGHT:
-                        show_maze_password_entry()
-                        return False
+                    show_maze_password_entry()
+                    return False
+                if event.type == KEYDOWN and event.key == K_ESCAPE and event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.quit()
+                    exit()
 ########################## Maze PASSWORD ENTRY SCREEN ##########################
 def show_maze_password_entry():
     screen.fill((0,0,0,0))
@@ -455,7 +475,6 @@ def show_maze_password_entry():
             if event.type == pygame.QUIT and adminMode:
                 pygame.quit()
                 sys.exit()
-      
             if event.type == pygame.KEYDOWN:
                 # Check for backspace
                 if event.key == pygame.K_BACKSPACE:
@@ -550,7 +569,6 @@ def show_decision():
             if event.type == pygame.QUIT and adminMode:
                 pygame.quit()
                 sys.exit()
-      
             if event.type == pygame.KEYDOWN:
                 # Right Arrow for next Screen
                 #if event.key == K_RIGHT and adminMode:
