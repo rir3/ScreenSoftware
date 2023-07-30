@@ -103,6 +103,15 @@ def comms_rw(action, status="N/A"):
         return False, False
     return False, False
 
+def record():
+    global status_found
+    status_found = False
+    text_font = pygame.font.Font(None, 50)
+    text_surface = text_font.render('RECORDING IN PROGRESS!', True, (0, 0, 0))
+    screen.blit(text_surface, (575+top_border, 375+top_border))
+    pygame.display.flip()
+    RecordWebCam.record(breakInVideo)
+
 ########################## RECORD SCREEN ##########################
 def show_record():
     global status_found
@@ -110,21 +119,21 @@ def show_record():
     pygame.display.flip()
     #Records Video from WebCam
     if not recording:
-        return
+        return False
     elif status_found:
-        status_found = False
-        RecordWebCam.record(breakInVideo) 
+        record()
+        return False
     elif comms_mode:
         while True:
             pygame.event.pump() # Keeps from Idle
             time.sleep(0.05) #(20 fps)
             status_found, break_loop = comms_rw("read", "Game Started")
             if status_found:
-                status_found = False
-                RecordWebCam.record(breakInVideo)
-                return
+                record()
+                return False
     else:
-        RecordWebCam.record(breakInVideo)
+        record()
+        return False
         
 ########################## STATIC SCREEN ##########################
 def show_static(): 
@@ -142,7 +151,7 @@ def show_static():
         # Iterate over each frame of the video and display it in the Pygame window
         for frame in clip.iter_frames(fps=clip.fps):
             pygame.event.pump() # Keeps from Idle
-            time.sleep(0.05) #(20 fps)
+            time.sleep(0.1) #(20 fps)
             #print("Here:4")
             #pygame.event.pump()
             surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
