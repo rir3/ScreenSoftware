@@ -103,15 +103,32 @@ def comms_rw(action, status="N/A"):
         return False, False
     return False, False
 
+def delay(delay_time):
+    start_time = time.time()
+    trigger_time = start_time + delay_time
+    while True:
+        pygame.event.pump() # Keeps from Idle
+        time.sleep(0.1) #(20 fps)
+        if time.time() > trigger_time:
+            return False
+
 def record():
+    RecordWebCam.record(breakInVideo)
+
+def record_helper():
     global status_found
     status_found = False
+
     screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))#White Box
     text_font = pygame.font.Font(None, 50)#Font 50 Size
     text_surface = text_font.render('RECORDING IN PROGRESS!', True, (0, 0, 0))#Text Black Font
     screen.blit(text_surface, (575+top_border, 375+top_border))
     pygame.display.flip()
-    RecordWebCam.record(breakInVideo)
+
+    record_thread = threading.Thread(target=record)
+    record_thread.start()
+
+    delay(17)
 
 ########################## RECORD SCREEN ##########################
 def show_record():
@@ -122,7 +139,7 @@ def show_record():
     if not recording:
         return False
     elif status_found:
-        record()
+        record_helper()
         return False
     elif comms_mode:
         while True:
@@ -130,10 +147,10 @@ def show_record():
             time.sleep(0.05) #(20 fps)
             status_found, break_loop = comms_rw("read", "Game Started")
             if status_found:
-                record()
+                record_helper()
                 return False
     else:
-        record()
+        record_helper()
         return False
         
 ########################## STATIC SCREEN ##########################
