@@ -137,7 +137,7 @@ def record_helper():
     record_thread = threading.Thread(target=record)
     record_thread.start()
 
-    delay(17)
+    delay(25)# Add Code to wait for thread to finish before continueing
 
 ########################## RECORD SCREEN ##########################
 def show_record():
