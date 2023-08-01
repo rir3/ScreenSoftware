@@ -10,7 +10,7 @@ from queue import Queue
 
 
 #Settings
-recording = False
+recording = True
 comms_mode = False #Disables/Enables Communication Mode for COGS Communication (Arduino)
 adminMode = True #Allows you to skip screens and view mouse
 macBook = True #Enables screen settings for macBook pro 15
@@ -136,8 +136,9 @@ def record_helper():
 
     record_thread = threading.Thread(target=record)
     record_thread.start()
-
-    delay(25)# Add Code to wait for thread to finish before continueing
+    
+    while record_thread.is_alive():
+        delay(5)# Add Code to wait for thread to finish before continueing
 
 ########################## RECORD SCREEN ##########################
 def show_record():

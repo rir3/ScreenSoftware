@@ -9,8 +9,8 @@ def record(video_name="WebCamVideo.avi"):
 	#video_name needs .avi extension
 	#Add Code to find webcam and use said webcam for VideoCapture
 	# This will return video from the first webcam on your computer.
-	#cap = cv2.VideoCapture(0)#For Mac
-	cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)#For Windows
+	cap = cv2.VideoCapture(0)#For Mac
+	#cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)#For Windows
 	#pygame.event.pump()
 
 	#Get Webcam Max Settings Automatically Here
