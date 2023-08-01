@@ -138,7 +138,7 @@ def record_helper():
     record_thread.start()
     
     while record_thread.is_alive():
-        delay(5)# Add Code to wait for thread to finish before continueing
+        delay(1)# Add Code to wait for thread to finish before continueing
 
 ########################## RECORD SCREEN ##########################
 def show_record():
