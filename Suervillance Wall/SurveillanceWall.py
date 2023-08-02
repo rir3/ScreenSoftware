@@ -11,9 +11,9 @@ from queue import Queue
 
 #Settings
 recording = True
-comms_mode = False #Disables/Enables Communication Mode for COGS Communication (Arduino)
-adminMode = True #Allows you to skip screens and view mouse
-macBook = True #Enables screen settings for macBook pro 15
+comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
+adminMode = False #Allows you to skip screens and view mouse
+macBook = False #Enables screen settings for macBook pro 15
 
 pygame.display.set_caption('SA-Wall')#Window Name
 
