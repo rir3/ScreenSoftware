@@ -161,7 +161,6 @@ def show_record():
                 return False
     else:
         record_helper()
-        return False
         
 ########################## STATIC SCREEN ##########################
 def show_static(): 
