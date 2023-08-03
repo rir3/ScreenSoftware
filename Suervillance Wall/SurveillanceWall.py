@@ -16,11 +16,12 @@ comms_mode = True #Disables/Enables Communication Mode for COGS Communication (A
 adminMode = False #Allows you to skip screens and view mouse
 macBook = False #Enables screen settings for macBook pro 15
 
+#Mac Devs Change Settings here
 if(platform.system() == "Darwin"): #For Mac
     macBook = True 
     adminMode = True
-    comms_mode = False
-    recording = False
+    comms_mode = False #(Needs Arduino)
+    recording = False #(Needs Camera)
 
 pygame.display.set_caption('SA-Wall')#Window Name
 
