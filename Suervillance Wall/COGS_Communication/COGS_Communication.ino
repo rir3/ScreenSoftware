@@ -1,15 +1,17 @@
 //int action = 0;
-bool startReady;
-bool loginReady;
-
-//int resetPin = 7;/
+//int resetPin = 7;
+//Used as 5V
 int highPin = 5;
+
 int startPin = 6;
 int loginPin = 7;
+bool start = LOW;
+bool login = LOW;
+
 int badEndingPin = 8;
 int goodEndingPin = 9;
 int mazeSolvedPin = 10;
-int delayTime = 10000;
+int delayTime = 500;
 
 void setup()
 {
@@ -22,8 +24,6 @@ void setup()
   //pinMode(resetPin, INPUT);
 
   digitalWrite(highPin, HIGH);
-  startReady = true;
-  loginReady = true;
   
   Serial.begin(9600);
   //Serial.write("Process Started:");
@@ -34,25 +34,23 @@ void loop()
     while(Serial.available()){
         String message = Serial.readString();
         message.trim();
-        //Serial.println("Arduino:" + message);
         to_cogs(message);
-        //action(Serial.parseInt());
      }
-    if(digitalRead(startPin) == HIGH) {
-        Serial.println("Game Started");
-        //action(1);
-        //startReady = false;
-        delay(delayTime);
-    }
-    if(digitalRead(loginPin) == HIGH) {
-        Serial.println("Show Login");
-        //action(2);
-        //loginReady = false;
-        delay(delayTime);
-    }
-    else{
-        Serial.println("N/A");
-        delay(500);
+     
+    read_once(startPin,&start,"Game Started");
+    read_once(loginPin,&login,"Show Login");
+    
+    Serial.println("N/A");
+    delay(delayTime);
+}
+
+//Will Send One Msg Per if from LOW -> HIGH
+//Prevents multiple msg outs from Arduino
+void read_once(int pin, bool *prev, String msg){
+  bool temp = digitalRead(pin);
+  if(*prev != temp){
+      *prev = temp;
+      if(*prev){Serial.println(msg);}
     }
 }
 
@@ -78,8 +76,6 @@ void toggle(int pin)
 
 void reset()
 {
-  startReady = true;
-  loginReady = true;
   digitalWrite(mazeSolvedPin, LOW);
   digitalWrite(goodEndingPin, LOW);
   digitalWrite(badEndingPin, LOW); 
