@@ -4,13 +4,18 @@
 # organize imports
 import cv2 #opencv-python
 import time
+import platform
 
 def record(video_name="WebCamVideo.avi"):
 	#video_name needs .avi extension
 	#Add Code to find webcam and use said webcam for VideoCapture
 	# This will return video from the first webcam on your computer.
 	#cap = cv2.VideoCapture(0)#For Mac
-	cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)#For Windows
+	
+	if(platform.system() == "Darwin"):
+		cap = cv2.VideoCapture(0)#For Mac
+	else:
+		cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)#For Windows
 
 	#Get Webcam Max Settings Automatically Here
 	cap.set(3, 1920)
