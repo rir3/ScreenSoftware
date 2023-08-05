@@ -48,6 +48,9 @@ void loop()
 //Prevents multiple msg outs from Arduino
 void read_once(int pin, bool *prev, String msg){
   bool temp = digitalRead(pin);
+  if(msg == "Game Started" && temp){
+    reset();
+  }
   if(*prev != temp){
       *prev = temp;
       if(*prev){Serial.println(msg);}
@@ -65,7 +68,7 @@ void to_cogs(String a)
     else if(a == "Bad Ending"){
       digitalWrite(badEndingPin, HIGH);
     }
-    //Serial.println("Arduino: " + a);
+    Serial.println("Arduino: " + a);
 }
 
 void toggle(int pin)
