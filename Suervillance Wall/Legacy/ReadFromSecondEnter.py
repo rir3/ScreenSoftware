@@ -16,6 +16,7 @@ while True:
             sys.exit()
         
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN:
-                if pygame.key.get_mods() & pygame.KMOD_SHIFT:
+            if event.key == pygame.K_KP_ENTER:
                     print("Second Enter Button Pressed")
+
+                    

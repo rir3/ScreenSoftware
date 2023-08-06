@@ -276,7 +276,7 @@ def show_password_entry():
                 # Right Arrow for next Screen
                 elif event.key == K_RIGHT and adminMode:
                     return
-                elif event.key == K_RETURN:
+                elif event.key == K_RETURN or event.key == K_KP_ENTER:
                     if user_text.upper() == loginPassword.upper():
                         return False
                     else:
@@ -492,7 +492,7 @@ def show_maze_password_entry():
                 elif event.key == K_LEFT:
                     show_maze()
                     return
-                elif event.key == K_RETURN:
+                elif event.key == K_RETURN or event.key == K_KP_ENTER:
                     if user_text == mazeCode:
                         if comms_mode:
                             comms_rw("write", "Maze Solved")
@@ -592,7 +592,7 @@ def show_decision():
                     #showChoice("VIDEO DELETED!")
                     #return
                 # Leave Video
-                elif event.key == K_RETURN:
+                elif event.key == K_RETURN or event.key == K_KP_ENTER:
                     if comms_mode:
                             comms_rw("write", "Good Ending")
                     choice_text = "DIAMOND THEFT REPORTED"
