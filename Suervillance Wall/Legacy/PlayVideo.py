@@ -6,10 +6,15 @@ import time
 pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
-video = "good_ending.mp4"
+video = "bad_ending.mp4"
 
 # Initialize Pygame
 pygame.init()
+
+screen_info = pygame.display.Info()
+screen_width = screen_info.current_w
+screen_height = screen_info.current_h
+print(screen_width)
 
 screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
 
@@ -38,11 +43,17 @@ def play_video(video):
         screen.blit(scaled_surface, (0, top_border))
         time.sleep(.05)
         pygame.display.flip()
-        
-def play_video_2(video):
-    clip = VideoFileClip(video).resize(1.15)
-    clip.preview()
 
-play_video(video)
+def play_video_2(video):
+    clip = VideoFileClip(video).resize(width=screen_width)
+
+    #Calculates top Margin for Video to be Center
+    video_height = clip.size[1]
+    top_margin = int((screen_height - video_height)/2) #int used for not float
+
+    clip = clip.margin(top=top_margin)
+    clip.preview(fullscreen=True)
+
+#play_video(video)
 play_video_2(video)
 pygame.quit()
