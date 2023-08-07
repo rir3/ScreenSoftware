@@ -279,7 +279,7 @@ def show_password_entry():
                 elif event.key == K_RETURN or event.key == K_KP_ENTER:
                     if user_text.upper() == loginPassword.upper():
                         return False
-                    else:
+                    elif user_text.upper() != loginPassword.upper():
                         user_text = ""
                         text_font_Red = pygame.font.Font(None, 50)
                         text_surface = text_font_Red.render("WRONG PASSWORD!", True, (255, 0, 0))
@@ -498,7 +498,7 @@ def show_maze_password_entry():
                             comms_rw("write", "Maze Solved")
                         #showDecision()
                         return
-                    else:
+                    elif user_text != mazeCode:
                         user_text = ""
                         text_font_Red = pygame.font.Font(None, 50)
                         text_surface = text_font_Red.render("WRONG CODE!", True, (255, 0, 0))
