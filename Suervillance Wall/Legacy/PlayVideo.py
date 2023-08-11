@@ -6,7 +6,7 @@ import time
 pygame.display.set_caption('SA-Wall')#Window Name
 
 #Resources
-video = "bad_ending.mp4"
+video = "WindowWall.mp4"
 
 # Initialize Pygame
 pygame.init()
@@ -46,12 +46,22 @@ def play_video(video):
 
 def play_video_2(video):
     clip = VideoFileClip(video).resize(width=screen_width)
+    
+    speedup_factor = 2
+
+    # Calculate the new duration based on the speedup factor
+    new_duration = clip.duration / speedup_factor
+
+    # Set the new duration for the video clip
+    #clip = clip.set_duration(new_duration)
 
     #Calculates top Margin for Video to be Center
     video_height = clip.size[1]
     top_margin = int((screen_height - video_height)/2) #int used for not float
-
-    clip = clip.margin(top=top_margin)
+    #does not work for when using multiple monitors
+    #clip = clip.margin(top=top_margin)
+    if(top_margin > 0):
+        clip = clip.margin(top=top_margin)
     clip.preview(fullscreen=True)
 
 #play_video(video)
