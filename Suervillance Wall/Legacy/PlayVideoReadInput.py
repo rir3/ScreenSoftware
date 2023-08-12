@@ -12,10 +12,10 @@ screen = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE
 clock = pygame.time.Clock()
 
 # Load the video clip
-video_path = "window-wall.MOV"
+video_path = "WindowWall.mov"
 video_clip = VideoFileClip(video_path).resize(height=screen_height)
 video_clip = video_clip.subclip(0, 75)
-
+#Add Code to handle width
 # Play the video while capturing user input
 play_video = True
 current_time = 0  # Initialize current_time
