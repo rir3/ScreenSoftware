@@ -7,12 +7,9 @@ pygame.init()
 # Set up the Pygame display
 screen_info = pygame.display.Info()
 screen_width = screen_info.current_w
-screen_height = screen_info.current_h
-screen = pygame.display.set_mode((screen_width, screen_height))
+screen_height = screen_info.current_h+500
+screen = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE)
 clock = pygame.time.Clock()
-
-# Define the speedup factor
-speedup_factor = 2
 
 # Load the video clip
 video_path = "WindowWall.mp4"
@@ -30,16 +27,15 @@ while play_video:
     # Get the current time in the video
     current_time = pygame.time.get_ticks() / 1000
 
-    # Calculate the adjusted time for faster playback
-    adjusted_time = current_time * speedup_factor
-
     # Display video frame
-    frame = video_clip.get_frame(pygame.time.get_ticks() / 1000)
+    frame = video_clip.get_frame(current_time)
     pygame_frame = pygame.surfarray.make_surface(frame.swapaxes(0,1))
     screen.blit(pygame_frame, (0, 0))
     pygame.display.flip()
 
     clock.tick(video_clip.fps)
+    #clock.tick(video_clip.fps * speedup_factor)  # Adjust tick rate for faster playback
+
 
 # Quit Pygame
 pygame.quit()
