@@ -134,8 +134,12 @@ def destroy_screen():
     # Quit Pygame
     pygame.quit()
 
-screen = create_screen()
-video = "bad_ending.mp4"
-speed = 3
+def main():
+    screen = create_screen()
+    video = "bad_ending.mp4"
+    speed = 3
 
-play_video(video, screen, speed)
+    play_video(video, screen, speed)
+
+if __name__ == "__main__":
+    main()
