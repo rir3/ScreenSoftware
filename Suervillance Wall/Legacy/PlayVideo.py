@@ -1,5 +1,6 @@
 import pygame
-from moviepy.editor import VideoFileClip
+#from moviepy.editor import VideoFileClip
+from moviepy.editor import *
 import time
 
 
@@ -9,14 +10,14 @@ pygame.display.set_caption('SA-Wall')#Window Name
 video = "WindowWall.mp4"
 
 # Initialize Pygame
-pygame.init()
+#pygame.init()
 
 screen_info = pygame.display.Info()
 screen_width = screen_info.current_w
 screen_height = screen_info.current_h
 print(screen_width)
 
-screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
+#screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
 
 #Macbook Settings
 scale_factor = 1.15
@@ -44,13 +45,30 @@ def play_video(video):
         time.sleep(.05)
         pygame.display.flip()
 
+def video_speed_modifier(video_clip, speed_factor = 1):
+    # Video Already At Speed 1
+    if(speed_factor == 1):
+        return video_clip
+    
+    # Calculate the new duration for the double speed video
+    new_duration = video_clip.duration / speed_factor
+
+    # Speed up the video clip
+    clip = video_clip.fx( vfx.speedx, speed_factor)
+
+    # Trim the sped up clip to the new duration
+    clip = clip.subclip(0, new_duration)
+
+    return clip
+
+
 def play_video_2(video):
     clip = VideoFileClip(video).resize(width=screen_width)
-    
-    speedup_factor = 2
+
+    clip = video_speed_modifier(clip, .25)
 
     # Calculate the new duration based on the speedup factor
-    new_duration = clip.duration / speedup_factor
+    #new_duration = clip.duration / speedup_factor
 
     # Set the new duration for the video clip
     #clip = clip.set_duration(new_duration)
@@ -62,6 +80,7 @@ def play_video_2(video):
     #clip = clip.margin(top=top_margin)
     if(top_margin > 0):
         clip = clip.margin(top=top_margin)
+
     clip.preview(fullscreen=True)
 
 #play_video(video)
