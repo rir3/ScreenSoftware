@@ -136,8 +136,8 @@ def destroy_screen():
 
 def main():
     screen = create_screen()
-    video = "bad_ending.mp4"
-    speed = 3
+    video = "WindowWall.mov"
+    speed = 2
 
     play_video(video, screen, speed)
 
