@@ -8,6 +8,7 @@ import COGS_Communication
 import threading
 from queue import Queue
 import platform
+import VideoPlayer
 
 
 #Settings
@@ -35,7 +36,9 @@ mazeCode = "317208941"
 choice_text = ""
 status_found = False
 goodEnding = "good_ending.mp4"
+goodEndingAudio = "good_ending.mp3"
 badEnding = "bad_ending.mp4"
+badEndingAudio = "bad_ending.mp3"
 good_ending = False
 
 #Comms Resources
@@ -688,40 +691,9 @@ def show_ending():
     # Load the video file
 
     if good_ending:
-        clip = VideoFileClip(goodEnding)
+        VideoPlayer.play_video(goodEnding,goodEndingAudio,screen)
     else:
-        clip = VideoFileClip(badEnding)
-        clip = clip.subclip(1, 10)
-    # Chooses one ending or the other depending on choice made
-
-    for frame in clip.iter_frames(fps=clip.fps):
-        pygame.event.pump() # Keeps from Idle
-        time.sleep(0.05) #(20 fps)
-        surface = pygame.surfarray.make_surface(frame.swapaxes(0,1))
-        # Get the original dimensions of the image
-        orig_size = surface.get_size()
-
-        # Set the scale factor
-        scale_adj_factor = 1
-
-        # Scale the image
-        scaled_surface = pygame.transform.scale(surface, (orig_size[0]*scale_factor*scale_adj_factor, orig_size[1]*scale_factor*scale_adj_factor))
-            
-        screen.blit(scaled_surface, (0, top_border))
-        time.sleep(.05)
-        pygame.display.flip()
-
-        if adminMode:
-            # Check for events and exit if the user presses the escape key
-            for event in pygame.event.get():
-                pygame.event.pump() # Keeps from Idle
-                time.sleep(0.05) #(20 fps)
-                if event.type == KEYDOWN and event.key == K_ESCAPE:
-                    pygame.quit()
-                    exit()
-                # Space for next Screen
-                if event.type == KEYDOWN and event.key == K_SPACE:
-                    return
+        VideoPlayer.play_video(badEnding,badEndingAudio,screen)
 
 def main_loop():
     global status_found
