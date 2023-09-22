@@ -6,5 +6,6 @@ Suervillance Wall/.DS_Store
 *.mp4
 *.avi
 *.MOV
+*.mp3
 #python cache
 __pycache__/
