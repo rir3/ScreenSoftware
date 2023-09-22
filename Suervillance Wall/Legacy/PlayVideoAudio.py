@@ -133,7 +133,7 @@ def create_screen():
     screen_height = screen_info.current_h
 
     # Set up the Pygame displays
-    screen = pygame.display.set_mode((screen_width*num_displays, screen_height), pygame.FULLSCREEN)
+    screen = pygame.display.set_mode((screen_width*num_displays, screen_height), pygame.RESIZABLE)
 
     return screen
 
