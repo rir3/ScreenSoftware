@@ -9,6 +9,7 @@ import threading
 from queue import Queue
 import platform
 import VideoPlayer
+import VideoInVideo
 
 
 #Settings
@@ -37,8 +38,10 @@ choice_text = ""
 status_found = False
 goodEnding = "good_ending.mp4"
 goodEndingAudio = "good_ending.mp3"
+goodEndingEdited = "good_ending_edited.mp4"
 badEnding = "bad_ending.mp4"
 badEndingAudio = "bad_ending.mp3"
+badEndingEdited = "bad_ending_edited.mp4"
 good_ending = False
 
 #Comms Resources
@@ -132,6 +135,27 @@ def check_close_event():
             pygame.quit()
             exit()
 
+def video_edit(main_video, overlay_video, output_video):
+    VideoInVideo.overlay_video(main_video, overlay_video, output_video)
+
+def video_edit_helper(main_video, overlay_video, output_video):
+    video_edit_thread = threading.Thread(target=video_edit, args=(main_video, overlay_video, output_video))
+    video_edit_thread.start()
+    return video_edit_thread
+
+def show_video_edit():  
+    #Shows Recording Modal
+    screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))#White Box
+    text_font = pygame.font.Font(None, 50)#Font 50 Size
+    text_surface = text_font.render('VIDEO EDITING IN PROGRESS!', True, (0, 0, 0))#Text Black Font
+    screen.blit(text_surface, (500+top_border, 375+top_border))
+    pygame.display.flip()
+
+    vid1_thread = video_edit_helper(goodEnding, breakInVideo, goodEndingEdited)
+    vid2_thread = video_edit_helper(badEnding, breakInVideo, badEndingEdited)
+    while vid1_thread.is_alive() or vid2_thread.is_alive():
+        delay(1)
+
 def record():
     RecordWebCam.record(breakInVideo)
 
@@ -139,10 +163,11 @@ def record_helper():
     global status_found
     status_found = False
 
+    #Shows Recording Modal
     screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))#White Box
     text_font = pygame.font.Font(None, 50)#Font 50 Size
     text_surface = text_font.render('RECORDING IN PROGRESS!', True, (0, 0, 0))#Text Black Font
-    screen.blit(text_surface, (575+top_border, 375+top_border))
+    screen.blit(text_surface, (500+top_border, 375+top_border))
     pygame.display.flip()
 
     record_thread = threading.Thread(target=record)
@@ -691,13 +716,13 @@ def show_ending():
     # Load the video file
 
     if good_ending:
-        VideoPlayer.play_video(goodEnding,goodEndingAudio,screen)
+        VideoPlayer.play_video(goodEndingEdited,goodEndingAudio,screen)
     else:
-        VideoPlayer.play_video(badEnding,badEndingAudio,screen)
+        VideoPlayer.play_video(badEndingEdited,badEndingAudio,screen)
 
 def main_loop():
     global status_found
-    show_list = [show_record, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
+    show_list = [show_record, show_video_edit, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
     while True:     
         for func in show_list:
