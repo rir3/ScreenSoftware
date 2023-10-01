@@ -17,6 +17,7 @@ recording = True
 comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
 adminMode = False #Allows you to skip screens and view mouse
 macBook = False #Enables screen settings for macBook pro 15
+break_infinite_loop = False #breaks infinite main loop
 
 #Mac Devs Change Settings here
 if(platform.system() == "Darwin"): #For Mac
@@ -24,6 +25,7 @@ if(platform.system() == "Darwin"): #For Mac
     adminMode = True
     comms_mode = False #(Needs Arduino)
     recording = False #(Needs Camera)
+    break_infinite_loop = True
 
 pygame.display.set_caption('SA-Wall')#Window Name
 
@@ -722,6 +724,7 @@ def show_ending():
 
 def main_loop():
     global status_found
+    global infinite_main_loop
     show_list = [show_record, show_video_edit, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
     while True:     
@@ -730,11 +733,11 @@ def main_loop():
             if(break_flag):
                 status_found = True
                 break
+        if break_infinite_loop:
+           break
 
 def main():
     main_loop()
-    #main_thread = threading.Thread(target=main_loop)
-    #main_thread.start()
 
 if __name__ == "__main__":
     main()
