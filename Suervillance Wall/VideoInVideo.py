@@ -7,7 +7,7 @@ def overlay_video(main_video, overlay_video, output_video="output_video.mp4"):
 
     overlay_clip = overlay_clip.resize(width=750, height=467)
     overlay_clip = overlay_clip.subclip(0, 33)
-    overlay_clip = overlay_clip.set_start(12)
+    overlay_clip = overlay_clip.set_start(13)
     
     final_video = CompositeVideoClip([
                             main_clip,
