@@ -9,3 +9,4 @@ Suervillance Wall/.DS_Store
 *.mp3
 #python cache
 __pycache__/
+logs/

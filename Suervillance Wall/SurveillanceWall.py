@@ -10,6 +10,7 @@ from queue import Queue
 import platform
 import VideoPlayer
 import VideoInVideo
+import LoggingConfig
 
 
 #Settings
@@ -28,6 +29,9 @@ if(platform.system() == "Darwin"): #For Mac
     break_infinite_loop = True
 
 pygame.display.set_caption('SA-Wall')#Window Name
+
+# Use the logger defined in the logging settings module
+logger = LoggingConfig.logger
 
 #Resources
 arduinoPort = '/dev/tty.usbmodem14201'
@@ -146,6 +150,8 @@ def video_edit_helper(main_video, overlay_video, output_video):
     return video_edit_thread
 
 def show_video_edit():
+    logger.info("Reached: show_video_edit()")
+
     if not recording:
         return False
     #Shows Recording Modal
@@ -182,6 +188,7 @@ def record_helper():
 
 ########################## RECORD SCREEN ##########################
 def show_record():
+    logger.info("Reached: show_record()")
     global status_found
     screen.fill((0,0,0,0))     
     pygame.display.flip()
@@ -203,7 +210,8 @@ def show_record():
         record_helper()
         
 ########################## STATIC SCREEN ##########################
-def show_static(): 
+def show_static():
+    logger.info("Reached: show_static()")
     screen.fill((0,0,0,0))
     # Load the video file
     clip = VideoFileClip(staticVideo)
@@ -262,38 +270,41 @@ def show_static():
                         pygame.quit()
                         exit()
 
+def reset_password_entry():
+    text_font = pygame.font.Font(None, 100)
+
+    # White Box for Text Entry
+    screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))
+    
+    text2_surface = text_font.render('_________________', True, (0, 0, 0))
+    text_surface = text_font.render('ENTER', True, (0, 0, 0))
+    text3_surface = text_font.render('PASSWORD:', True, (0, 0, 0))
+
+    screen.blit(text_surface, (575+top_border, 375+top_border))
+    screen.blit(text3_surface, (500+top_border, 450+top_border))
+    screen.blit(text2_surface,  (400+top_border, 618+100+top_border))
+
 ########################## PASSWORD ENTRY SCREEN ##########################
 def show_password_entry():
+    logger.info("Reached: show_password_entry()")
     screen.fill((0,0,0,0))
 
     clock = pygame.time.Clock()
 
-    # basic font for user typed
-    base_font = pygame.font.Font(None, 32)
     user_text = ''
-      
-    # create rectangle
-    # Rect(left, top, width, height)
-    input_rect = pygame.Rect(650, 618, 10, 32)
-      
-    # color of input box.
-    color = pygame.Color('white')
-
-    # Font for On Screen Text
-    text = 'ENTER'
-    text_pos = pygame.Rect(100, 618, 10, 32)
     text_font = pygame.font.Font(None, 100)
 
-    text2 = '_________________'
-    text2_pos = pygame.Rect(100, 618, 10, 32)
-    text2_font = pygame.font.Font(None, 100)
+    # Aqua Background
+    screen.fill((35,250,247,255))
+
+    reset_password_entry()
 
     while True:
         pygame.event.pump() # Keeps from Idle
         time.sleep(0.05) #(20 fps)
         for event in pygame.event.get():
             pygame.event.pump() # Keeps from Idle
-            time.sleep(0.05) #(20 fps)
+            #time.sleep(0.05) #(20 fps)
       
           # if user types QUIT then the screen will close
             if event.type == pygame.QUIT and adminMode:
@@ -301,25 +312,33 @@ def show_password_entry():
                 sys.exit()
                     
             if event.type == pygame.KEYDOWN:
+                logger.info("KeyDown")
                 # Check for backspace
                 if event.key == pygame.K_BACKSPACE:
+                    logger.info("Backspace: " + user_text)
                     # get text input from 0 to -1 i.e. end.
                     user_text = user_text[:-1]
+                    reset_password_entry()
                 # Right Arrow for next Screen
                 elif event.key == K_RIGHT and adminMode:
                     return
                 elif event.key == K_RETURN or event.key == K_KP_ENTER:
+                    logger.info("Password Input Attempt: " + user_text)
                     if user_text.upper() == loginPassword.upper():
+                        logger.info("Password Passed: " + user_text)
                         return False
                     elif user_text.upper() != loginPassword.upper():
+                        logger.info("Password Failed:" + user_text)
                         user_text = ""
-                        text_font_Red = pygame.font.Font(None, 50)
-                        text_surface = text_font_Red.render("WRONG PASSWORD!", True, (255, 0, 0))
-                        screen.blit(text_surface, (525+top_border, 525+top_border))
+                        text_font_red = pygame.font.Font(None, 50)
+                        text_surface_red = text_font_red.render("WRONG PASSWORD!", True, (255, 0, 0))
+                        screen.blit(text_surface_red, (525+top_border, 525+top_border))
                         pygame.display.flip()
                         time.sleep(1)
-                
+                        reset_password_entry()
+
                 elif len(user_text)<7:
+                    logger.info("Single Key:" + event.unicode)
                     user_text += event.unicode
                     user_text = user_text.upper()
 
@@ -327,27 +346,9 @@ def show_password_entry():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
-        # Aqua Background
-        screen.fill((35,250,247,255))
-        #screen.fill((0,0,0,0))
-        
-        # White Box for Text Entry
-        screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))
 
-        # draw rectangle and argument passed which should
-        # be on screen
-        pygame.draw.rect(screen, color, input_rect)
-      
         user_text_surface = text_font.render(user_text, True, (0, 0, 0))
-        text2_surface = text_font.render(text2, True, (0, 0, 0))
-        text_surface = text_font.render(text, True, (0, 0, 0))
-        text3_surface = text_font.render('PASSWORD:', True, (0, 0, 0))
-          
-        # render at position stated in argumentsre
-        screen.blit(text_surface, (575+top_border, 375+top_border))
-        screen.blit(text3_surface, (500+top_border, 450+top_border))
-        screen.blit(text2_surface,  (400+top_border, input_rect.y+100+top_border))
-        screen.blit(user_text_surface, (400+50+top_border, input_rect.y+100+top_border))
+        screen.blit(user_text_surface, (400+50+top_border, 618+100+top_border))
           
 
         # set width of textfield so that text cannot get
@@ -364,6 +365,8 @@ def show_password_entry():
 
 ########################## STEALING SCREEN ##########################
 def show_break_in():
+    logger.info("Reached: show_break_in()")
+
     screen.fill((0,0,0,0))
     # Load the video file
     clip = VideoFileClip(breakInVideo)
@@ -406,6 +409,8 @@ def show_break_in():
 
 ########################## MAZE SCREEN ##########################
 def show_maze():
+    logger.info("Reached: show_maze()")
+
     screen.fill((0,0,0,0))
     #Scale Factor Change
     scale_factor_diff = .325
@@ -477,6 +482,8 @@ def show_maze():
                     exit()
 ########################## Maze PASSWORD ENTRY SCREEN ##########################
 def show_maze_password_entry():
+    logger.info("Reached: show_maze_password_entry()")
+
     screen.fill((0,0,0,0))
 
     clock = pygame.time.Clock()
@@ -579,6 +586,8 @@ def show_maze_password_entry():
 
 ########################## Decision SCREEN ##########################
 def show_decision():
+    logger.info("Reached: show_decision()")
+
     global choice_text
     global good_ending
     screen.fill((0,0,0,0))
@@ -680,6 +689,8 @@ def show_decision():
         clock.tick(60)
 
 def show_choice():
+    logger.info("Reached: show_choice()")
+
     global choice_text
     #started = False
     #start_time = time.time()
@@ -715,6 +726,8 @@ def show_choice():
             return False
 
 def show_ending():
+    logger.info("Reached: show_ending()")
+
     global good_ending
     screen.fill((0,0,0,0))
     # Load the video file
@@ -725,6 +738,7 @@ def show_ending():
         VideoPlayer.play_video(badEndingEdited,badEndingAudio,screen)
 
 def main_loop():
+    logger.info("main_loop - started")
     global status_found
     global infinite_main_loop
     show_list = [show_record, show_video_edit, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]

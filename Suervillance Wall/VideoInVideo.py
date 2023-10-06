@@ -18,7 +18,7 @@ def overlay_video(main_video, overlay_video, output_video="output_video.mp4"):
     final_video.write_videofile(output_video, codec="libx264")
 
 def main():
-    overlay_video("good_ending.mp4", "outpy.avi")
+    overlay_video("good_ending.mp4", "WebCamVideo.avi")
 
 if __name__ == "__main__":
     main()
