@@ -145,7 +145,9 @@ def video_edit_helper(main_video, overlay_video, output_video):
     video_edit_thread.start()
     return video_edit_thread
 
-def show_video_edit():  
+def show_video_edit():
+    if not recording:
+        return False
     #Shows Recording Modal
     screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))#White Box
     text_font = pygame.font.Font(None, 50)#Font 50 Size
