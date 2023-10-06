@@ -117,6 +117,7 @@ def play_video(video_path, audio_path, screen, speed_factor = 1, loop_video = Fa
             # Reset the adjusted time to loop the video
             if loop_video:
                 current_time = 0
+                play_audio = True
             else:
                 play_video = False
                 play_audio = False
