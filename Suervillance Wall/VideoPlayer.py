@@ -121,11 +121,11 @@ def play_video(video_path, audio_path, screen, speed_factor = 1, loop_video = Fa
                 play_video = False
                 play_audio = False
 
-        #ticks = pygame.time.get_ticks()
-        #print("Ticks: ", ticks)
-        current_time = pygame.mixer.music.get_pos()/1000 #Play Video at Audio Pace
-        #current_time += 1 / video_clip.fps  # Increment current_time
-        #current_time = ((ticks/1000)-prev_ticks) / video_clip.fps
+        # Check if audio is playing
+        if pygame.mixer.music.get_busy():
+            current_time = pygame.mixer.music.get_pos()/1000 #Play Video at Audio Pace
+        else:
+            current_time += 1 / video_clip.fps #Increment current_time Pace Controled by clock
 
         # pygame clock control
         clock.tick(video_clip.fps)
