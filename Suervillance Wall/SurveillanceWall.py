@@ -115,6 +115,8 @@ def comms_start():
     
 
 def comms_rw(action, status="N/A"):
+    global status_found
+    
     start_status = "Game Started"
     reset_status = "Show_Reset"
     skip_status = "Show_Next"
@@ -126,7 +128,10 @@ def comms_rw(action, status="N/A"):
         while not statuses.empty():
             s = statuses.get()
             if(s == start_status):
+                status_found = True
                 return True, True
+            elif(s == reset_status):
+                return False, True
             elif(s == skip_status):
                 return True, False #Skip to show next screen
             elif(s == status):
@@ -761,14 +766,12 @@ def show_ending():
 
 def main_loop():
     logger.info("main_loop - started")
-    global status_found
     show_list = [show_record, show_video_edit, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
     while True:     
         for func in show_list:
             break_flag = func()
             if(break_flag):
-                status_found = True
                 break
         if infinite_main_loop:
            break
