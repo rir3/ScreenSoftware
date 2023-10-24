@@ -11,22 +11,24 @@ import platform
 import VideoPlayer
 import VideoInVideo
 import LoggingConfig
-
+import HttpServer
 
 #Settings
 recording = True
-comms_mode = True #Disables/Enables Communication Mode for COGS Communication (Arduino)
+comms_mode = True #Disables/Enables Communication Mode for COGS Communication
 adminMode = False #Allows you to skip screens and view mouse
 macBook = False #Enables screen settings for macBook pro 15
-break_infinite_loop = False #breaks infinite main loop
+infinite_main_loop = False #breaks infinite main loop
+arduino_enabled = True
 
 #Mac Devs Change Settings here
 if(platform.system() == "Darwin"): #For Mac
     macBook = True 
     adminMode = True
-    comms_mode = False #(Needs Arduino)
+    comms_mode = True
     recording = False #(Needs Camera)
-    break_infinite_loop = True
+    infinite_main_loop = False
+    arduino_enabled = False #(Needs Arduino)
 
 pygame.display.set_caption('SA-Wall')#Window Name
 
@@ -106,10 +108,16 @@ screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
 def comms_start():
     global comms_started
     comms_started = True
-    COGS_Communication.comms_helper(tasks, statuses)
+    HttpServer.start_helper(statuses)
+
+    if(arduino_enabled):
+        COGS_Communication.comms_helper(tasks, statuses)
+    
 
 def comms_rw(action, status="N/A"):
-    reset_status = "Game Started"
+    start_status = "Game Started"
+    reset_status = "Show_Reset"
+    skip_status = "Show_Next"
     if(not comms_started):
         comms_start()
     elif(action == "write"):
@@ -117,8 +125,10 @@ def comms_rw(action, status="N/A"):
     elif(action == "read"):
         while not statuses.empty():
             s = statuses.get()
-            if(s == reset_status):
+            if(s == start_status):
                 return True, True
+            elif(s == skip_status):
+                return True, False #Skip to show next screen
             elif(s == status):
                 return True, False #Found status
         return False, False
@@ -346,6 +356,8 @@ def show_password_entry():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
+                if status_found:
+                    return False
 
         user_text_surface = text_font.render(user_text, True, (0, 0, 0))
         screen.blit(user_text_surface, (400+50+top_border, 618+100+top_border))
@@ -394,6 +406,8 @@ def show_break_in():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
+                if status_found:
+                    return False
 
         if adminMode:
             # Check for events and exit if the user presses the escape key
@@ -455,6 +469,8 @@ def show_maze():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
+                if status_found:
+                    return False
         if adminMode:
             # Check for events and exit if the user presses the escape key
             for event in pygame.event.get():
@@ -515,6 +531,8 @@ def show_maze_password_entry():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
+                if status_found:
+                    return False
         for event in pygame.event.get():
             pygame.event.pump() # Keeps from Idle
             time.sleep(0.05) #(20 fps)
@@ -612,6 +630,8 @@ def show_decision():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
+                if status_found:
+                    return False
         for event in pygame.event.get():
             pygame.event.pump() # Keeps from Idle
             time.sleep(0.05) #(20 fps)
@@ -721,6 +741,8 @@ def show_choice():
                 status_found, break_loop = comms_rw("read")
                 if break_loop:
                     return True
+                if status_found:
+                    return False
         pygame.event.pump()
         if time.time() > trigger_time:
             return False
@@ -740,7 +762,6 @@ def show_ending():
 def main_loop():
     logger.info("main_loop - started")
     global status_found
-    global infinite_main_loop
     show_list = [show_record, show_video_edit, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
     while True:     
@@ -749,7 +770,7 @@ def main_loop():
             if(break_flag):
                 status_found = True
                 break
-        if break_infinite_loop:
+        if infinite_main_loop:
            break
 
 def main():
