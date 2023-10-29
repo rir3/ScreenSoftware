@@ -116,6 +116,7 @@ def comms_start():
 
 def comms_rw(action, status="N/A"):
     global status_found
+    global skip
     
     start_status = "Game Started"
     reset_status = "Show_Reset"
@@ -133,6 +134,7 @@ def comms_rw(action, status="N/A"):
             elif(s == reset_status):
                 return False, True
             elif(s == skip_status):
+                skip = True
                 return True, False #Skip to show next screen
             elif(s == status):
                 return True, False #Found status
@@ -205,6 +207,8 @@ def record_helper():
 def show_record():
     logger.info("Reached: show_record()")
     global status_found
+    global skip
+    skip = False
     screen.fill((0,0,0,0))     
     pygame.display.flip()
     #Records Video from WebCam
@@ -212,17 +216,23 @@ def show_record():
         return False
     elif status_found:
         record_helper()
+        show_video_edit()
         return False
-    elif comms_mode:
+    elif arduino_enabled:
         while True:
             pygame.event.pump() # Keeps from Idle
             time.sleep(0.05) #(20 fps)
             status_found, break_loop = comms_rw("read", "Game Started")
-            if status_found:
+            if skip:
+                    skip = False
+                    return False
+            elif status_found:
                 record_helper()
+                show_video_edit()
                 return False
     else:
         record_helper()
+        show_video_edit()
         
 ########################## STATIC SCREEN ##########################
 def show_static():
@@ -766,7 +776,7 @@ def show_ending():
 
 def main_loop():
     logger.info("main_loop - started")
-    show_list = [show_record, show_video_edit, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
+    show_list = [show_record, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
     while True:     
         for func in show_list:
