@@ -12,6 +12,7 @@ import VideoPlayer
 import VideoInVideo
 import LoggingConfig
 import HttpServer
+import os
 
 #Settings
 recording = True
@@ -107,11 +108,20 @@ screen = pygame.display.set_mode((2160, 1920), pygame.RESIZABLE)
 
 def comms_start():
     global comms_started
+    global httpd
     comms_started = True
-    HttpServer.start_helper(statuses)
+    httpd = HttpServer.start_helper(statuses)
 
     if(arduino_enabled):
         COGS_Communication.comms_helper(tasks, statuses)
+    
+def destroy():
+    httpd.shutdown()
+    httpd.server_close()
+    time.sleep(1)
+    pygame.quit()
+    sys.exit(1)
+    #os._exit(1)
     
 
 def comms_rw(action, status="N/A"):
@@ -121,6 +131,7 @@ def comms_rw(action, status="N/A"):
     start_status = "Game Started"
     reset_status = "Show_Reset"
     skip_status = "Show_Next"
+    quit_status = "Quit"
     if(not comms_started):
         comms_start()
     elif(action == "write"):
@@ -131,6 +142,8 @@ def comms_rw(action, status="N/A"):
             if(s == start_status):
                 status_found = True
                 return True, True
+            elif(s == quit_status):
+                destroy()
             elif(s == reset_status):
                 return False, True
             elif(s == skip_status):
