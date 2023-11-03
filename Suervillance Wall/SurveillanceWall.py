@@ -145,6 +145,7 @@ def comms_rw(action, status="N/A"):
             elif(s == quit_status):
                 destroy()
             elif(s == reset_status):
+                status_found = False
                 return False, True
             elif(s == skip_status):
                 skip = True
