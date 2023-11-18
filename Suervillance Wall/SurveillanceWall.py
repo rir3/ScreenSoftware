@@ -37,20 +37,23 @@ pygame.display.set_caption('SA-Wall')#Window Name
 logger = LoggingConfig.logger
 
 #Resources
+media_directory = "Media/"
+endings_directory = media_directory + "Endings/" 
+edited_directory = media_directory + "Editied_Endings/"
 arduinoPort = '/dev/tty.usbmodem14201'
-staticVideo = "StaticScreen.mp4"
+staticVideo = media_directory + "StaticScreen.mp4"
 loginPassword = "Rebecca"
-breakInVideo = "WebCamVideo.avi"#Must have end with .avi extension
-mazeImage = "Maze.png"
+breakInVideo = media_directory + "WebCamVideo.avi"#Must have end with .avi extension
+mazeImage = media_directory + "Maze.png"
 mazeCode = "317208941"
 choice_text = ""
 status_found = False
-goodEnding = "good_ending.mp4"
-goodEndingAudio = "good_ending.mp3"
-goodEndingEdited = "good_ending_edited.mp4"
-badEnding = "bad_ending.mp4"
-badEndingAudio = "bad_ending.mp3"
-badEndingEdited = "bad_ending_edited.mp4"
+goodEnding = endings_directory + "good_ending.mp4"
+goodEndingAudio = endings_directory + "good_ending.mp3"
+goodEndingEdited = edited_directory + "good_ending_edited.mp4"
+badEnding = endings_directory + "bad_ending.mp4"
+badEndingAudio = endings_directory + "bad_ending.mp3"
+badEndingEdited = edited_directory + "bad_ending_edited.mp4"
 good_ending = False
 
 #Comms Resources

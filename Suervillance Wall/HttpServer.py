@@ -27,11 +27,6 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
             param1_value = query_params['param1'][0]
             print(f'param1: {param1_value}')
             statuses.put(param1_value)
-            '''if(param1_value == "Quit"):
-                print("got here")
-                httpd.shutdown()
-                httpd.server_close()
-                #os._exit(1)'''
 
         if 'param2' in query_params:
             param2_value = query_params['param2'][0]
@@ -49,13 +44,6 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
 def start(httpd, statuse=Queue()):
     global statuses
     statuses = statuse
-
-    '''# Create a socket server with the custom request handler
-    with TCPServer(('', 8000), MyHandler) as httpd:
-        print('Server started on port 8000...')
-        httpd.allow_reuse_address = True
-        httpd.serve_forever()
-    '''
 
     print('Server started on port 8000...')
     httpd.serve_forever()

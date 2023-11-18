@@ -4,6 +4,7 @@ from pygame import mixer
 # Import everything needed to edit video clips
 from moviepy.editor import VideoFileClip
 from moviepy.editor import vfx
+import threading
 
 def video_speed_modifier(video_clip, speed_factor = 1):
     # Video Already At Speed 1
@@ -67,22 +68,18 @@ def play_video(video_path, audio_path, screen, speed_factor = 1, loop_video = Fa
 
     # Edit the video clip
     video_clip = scale_video(video_clip)
-    #video_clip = video_clip.subclip(0, 75)
     video_clip = video_speed_modifier(video_clip, speed_factor)
     video_clip = center_video(video_clip)
 
     #Audio
-    mixer.init()
-    mixer.music.load(audio_path)
-    mixer.music.set_volume(0.7)
+    if(audio_path != "na"):
+        mixer.init()
+        mixer.music.load(audio_path)
+        mixer.music.set_volume(0.7)
 
-    #Add Code to handle width
-    # Play the video while capturing user input
     play_video = True
-    play_audio = True
-    current_time = 0  # Initialize current_time
-
-    # pygame clock instanication
+    play_audio =  False if audio_path == "na" else True
+    current_time = 0 
     clock = pygame.time.Clock()
 
     while play_video:
@@ -117,7 +114,7 @@ def play_video(video_path, audio_path, screen, speed_factor = 1, loop_video = Fa
             # Reset the adjusted time to loop the video
             if loop_video:
                 current_time = 0
-                play_audio = True
+                play_audio = False if audio_path == "na" else True
             else:
                 play_video = False
                 play_audio = False
@@ -156,11 +153,15 @@ def destroy_screen():
 
 def main():
     screen = create_screen()
+    dirs = "Media/Endings/"
     video = "bad_ending.mp4"
-    audio = "bad_ending.mp3"
+    #video = "StaticScreen.mp4"
+    #audio = "bad_ending.mp3"
+    audio = "na"
     speed = 1
+    loop_video = False
 
-    play_video(video, audio, screen, speed)
+    play_video(dirs + video, audio, screen, speed, loop_video)
 
 if __name__ == "__main__":
     main()
