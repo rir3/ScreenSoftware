@@ -28,7 +28,7 @@ if(platform.system() == "Darwin"): #For Mac
     adminMode = True
     comms_mode = True
     recording = False #(Needs Camera)
-    infinite_main_loop = False
+    infinite_main_loop = True
     arduino_enabled = False #(Needs Arduino)
 
 pygame.display.set_caption('SA-Wall')#Window Name
@@ -231,10 +231,6 @@ def show_record():
     #Records Video from WebCam
     if not recording:
         return False
-    elif status_found:
-        record_helper()
-        show_video_edit()
-        return False
     elif arduino_enabled:
         while True:
             pygame.event.pump() # Keeps from Idle
@@ -247,6 +243,10 @@ def show_record():
                 record_helper()
                 show_video_edit()
                 return False
+    elif status_found:
+        record_helper()
+        show_video_edit()
+        return False
     else:
         record_helper()
         show_video_edit()
