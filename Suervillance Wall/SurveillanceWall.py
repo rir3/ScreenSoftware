@@ -45,6 +45,7 @@ staticVideo = media_directory + "StaticScreen.mp4"
 loginPassword = "Rebecca"
 breakInVideo = media_directory + "WebCamVideo.avi"#Must have end with .avi extension
 mazeImage = media_directory + "Maze.png"
+decisionImage = media_directory + "sel.jpg"
 mazeCode = "317208941"
 choice_text = ""
 status_found = False
@@ -655,6 +656,13 @@ def show_decision():
     # color of input box.
     color = pygame.Color('white')
 
+    screen.fill((0,0,0,0))
+    scale_factor_diff = .7
+    image = pygame.image.load(decisionImage).convert()
+    orig_size = image.get_size()
+    scaled_image = pygame.transform.scale(image, (orig_size[0]*scale_factor*scale_factor_diff, orig_size[1]*scale_factor*scale_factor_diff))
+    screen.blit(scaled_image, (0, top_border))
+
     while True:
         pygame.event.pump() # Keeps from Idle
         time.sleep(0.05) #(20 fps)
@@ -693,7 +701,7 @@ def show_decision():
                     return False
                     #showChoice("VIDEO NOT DELETED")
                     #return
-        
+        '''
         # White Box for Text Entry
         #screen.fill((255,255,255,255),(100+top_border+300,200+top_border,725,725))
         screen.fill((255,255,255,255),(300+top_border,200+top_border,900,900))
@@ -731,9 +739,7 @@ def show_decision():
         # set width of textfield so that text cannot get
         # outside of user's text input
         #input_rect.w = max(10, user_text_surface.get_width()+10)
-          
-        # display.flip() will update only a portion of the
-        # screen to updated, not full area
+        '''
         pygame.display.flip()
           
         # clock.tick(60) means that for every second at most
