@@ -795,13 +795,14 @@ def main_loop():
     logger.info("main_loop - started")
     show_list = [show_record, show_static, show_password_entry, show_break_in, show_maze, show_decision, show_choice, show_ending]
     
-    while True:     
+    running = True
+    while running:     
         for func in show_list:
             break_flag = func()
             if(break_flag):
                 break
         if infinite_main_loop:
-           break
+           running = False
 
 def main():
     main_loop()
