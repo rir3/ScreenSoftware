@@ -657,7 +657,7 @@ def show_decision():
     color = pygame.Color('white')
 
     screen.fill((0,0,0,0))
-    scale_factor_diff = .7
+    scale_factor_diff = .65
     image = pygame.image.load(decisionImage).convert()
     orig_size = image.get_size()
     scaled_image = pygame.transform.scale(image, (orig_size[0]*scale_factor*scale_factor_diff, orig_size[1]*scale_factor*scale_factor_diff))
