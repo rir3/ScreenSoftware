@@ -13,6 +13,8 @@ import VideoInVideo
 import LoggingConfig
 import HttpServer
 import os
+import add_logo
+from datetime import datetime
 
 #Settings
 recording = True
@@ -27,7 +29,7 @@ if(platform.system() == "Darwin"): #For Mac
     macBook = True 
     adminMode = True
     comms_mode = True
-    recording = False #(Needs Camera)
+    recording = True #(Needs Camera)
     infinite_main_loop = True
     arduino_enabled = False #(Needs Arduino)
 
@@ -55,7 +57,10 @@ goodEndingEdited = edited_directory + "good_ending_edited.mp4"
 badEnding = endings_directory + "bad_ending.mp4"
 badEndingAudio = endings_directory + "bad_ending.mp3"
 badEndingEdited = edited_directory + "bad_ending_edited.mp4"
+logo = media_directory + "Logo/logo_w.png"
 good_ending = False
+folder = ""
+folder_path = 'Shared/'
 
 #Comms Resources
 comms_started = False
@@ -176,6 +181,14 @@ def check_close_event():
             pygame.quit()
             exit()
 
+def logo_overlay(input_video,logo, output_video):
+    add_logo.embed(input_video,logo, output_video)
+
+def logo_overlay_helper(input_video,logo, output_video):
+    video_edit_thread = threading.Thread(target=logo_overlay, args=(input_video, logo, output_video))
+    video_edit_thread.start()
+    return video_edit_thread
+
 def video_edit(main_video, overlay_video, output_video):
     VideoInVideo.overlay_video(main_video, overlay_video, output_video)
 
@@ -183,6 +196,13 @@ def video_edit_helper(main_video, overlay_video, output_video):
     video_edit_thread = threading.Thread(target=video_edit, args=(main_video, overlay_video, output_video))
     video_edit_thread.start()
     return video_edit_thread
+
+def make_folder():
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    folder = folder_path + timestamp
+    os.makedirs(folder)
+
+    return folder
 
 def show_video_edit():
     logger.info("Reached: show_video_edit()")
@@ -196,9 +216,20 @@ def show_video_edit():
     screen.blit(text_surface, (500+top_border, 375+top_border))
     pygame.display.flip()
 
+    
+    folder = make_folder()+"/"
+    print(folder)
     vid1_thread = video_edit_helper(goodEnding, breakInVideo, goodEndingEdited)
     vid2_thread = video_edit_helper(badEnding, breakInVideo, badEndingEdited)
+
     while vid1_thread.is_alive() or vid2_thread.is_alive():
+        delay(1)
+        
+    vid3_thread = logo_overlay_helper(breakInVideo, logo, folder+"break_in.mp4")
+    vid4_thread = logo_overlay_helper(goodEndingEdited, logo, folder+"good_ending.mp4")
+    vid5_thread = logo_overlay_helper(badEndingEdited, logo, folder+"bad_ending.mp4")
+
+    while vid3_thread.is_alive() or vid4_thread.is_alive() or vid5_thread.is_alive():
         delay(1)
 
 def record():
