@@ -29,7 +29,7 @@ if(platform.system() == "Darwin"): #For Mac
     macBook = True 
     adminMode = True
     comms_mode = True
-    recording = True #(Needs Camera)
+    recording = False #(Needs Camera)
     infinite_main_loop = True
     arduino_enabled = False #(Needs Arduino)
 
@@ -405,8 +405,8 @@ def show_password_entry():
                         logger.info("Password Failed:" + user_text)
                         user_text = ""
                         text_font_red = pygame.font.Font(None, 50)
-                        text_surface_red = text_font_red.render("WRONG PASSWORD!", True, (255, 0, 0))
-                        screen.blit(text_surface_red, (525+top_border, 525+top_border))
+                        text_surface_red = text_font_red.render("WRONG PASSWORD! Hint Favorite Book!", True, (255, 0, 0))
+                        screen.blit(text_surface_red, (425+top_border, 525+top_border))
                         pygame.display.flip()
                         time.sleep(1)
                         reset_password_entry()
