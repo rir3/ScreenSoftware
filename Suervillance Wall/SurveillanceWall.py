@@ -60,7 +60,7 @@ badEndingEdited = edited_directory + "bad_ending_edited.mp4"
 logo = media_directory + "Logo/logo_w.png"
 good_ending = False
 folder = ""
-folder_path = 'Shared/'
+folder_path = 'Robbin_Videos/'
 
 #Comms Resources
 comms_started = False
