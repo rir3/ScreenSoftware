@@ -718,8 +718,8 @@ def show_decision():
                 if event.key == pygame.K_BACKSPACE:
                     if comms_mode:
                             comms_rw("write", "Bad Ending")
-                    choice_text = "SECURITY DOOR OVERIDDEN"
-                    good_ending = False
+                    choice_text = "DIAMOND THEFT REPORTED"
+                    good_ending = True
                     return False
                     #showChoice("VIDEO DELETED!")
                     #return
@@ -727,8 +727,8 @@ def show_decision():
                 elif event.key == K_RETURN or event.key == K_KP_ENTER:
                     if comms_mode:
                             comms_rw("write", "Good Ending")
-                    choice_text = "DIAMOND THEFT REPORTED"
-                    good_ending = True
+                    choice_text = "SECURITY DOOR OVERIDDEN"
+                    good_ending = False
                     return False
                     #showChoice("VIDEO NOT DELETED")
                     #return
